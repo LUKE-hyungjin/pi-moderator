@@ -3,6 +3,7 @@ import type { ActionFunctionArgs, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { supabase } from "~/lib/supabase.server";
 import type { MarkerType } from "~/components/map.client";
+import { useState } from "react";
 
 export const loader: LoaderFunction = async () => {
     return json({});
@@ -74,6 +75,28 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function AddMarker() {
     const navigate = useNavigate();
+    const [address, setAddress] = useState("");
+    const [latitude, setLatitude] = useState("");
+    const [longitude, setLongitude] = useState("");
+    // 주소로 위도/경도 검색
+    const searchAddress = async () => {
+        try {
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+            );
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                setLatitude(data[0].lat);
+                setLongitude(data[0].lon);
+            } else {
+                alert("주소를 찾을 수 없습니다.");
+            }
+        } catch (error) {
+            console.error("Error searching address:", error);
+            alert("주소 검색 중 오류가 발생했습니다.");
+        }
+    };
 
     return (
         <div className="container mx-auto px-6 py-8">
@@ -94,19 +117,27 @@ export default function AddMarker() {
                     </div>
 
                     <div>
-                        <label htmlFor="type" className="block text-sm font-medium mb-1">
-                            카테고리
+                        <label htmlFor="address" className="block text-sm font-medium mb-1">
+                            주소
                         </label>
-                        <select
-                            id="type"
-                            name="type"
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="education">교육</option>
-                            <option value="relay">중계</option>
-                            <option value="tax">세무</option>
-                        </select>
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                id="address"
+                                name="address"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                required
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button
+                                type="button"
+                                onClick={searchAddress}
+                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                            >
+                                주소 검색
+                            </button>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -119,6 +150,8 @@ export default function AddMarker() {
                                 step="any"
                                 id="latitude"
                                 name="latitude"
+                                value={latitude}
+                                onChange={(e) => setLatitude(e.target.value)}
                                 required
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
@@ -132,10 +165,28 @@ export default function AddMarker() {
                                 step="any"
                                 id="longitude"
                                 name="longitude"
+                                value={longitude}
+                                onChange={(e) => setLongitude(e.target.value)}
                                 required
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
+                    </div>
+
+                    <div>
+                        <label htmlFor="type" className="block text-sm font-medium mb-1">
+                            카테고리
+                        </label>
+                        <select
+                            id="type"
+                            name="type"
+                            required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="education">교육</option>
+                            <option value="relay">중계</option>
+                            <option value="tax">세무</option>
+                        </select>
                     </div>
 
                     <div>
