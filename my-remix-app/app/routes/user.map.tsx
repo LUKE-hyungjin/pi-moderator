@@ -3,7 +3,7 @@ import type { ActionFunctionArgs, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { supabase } from "~/lib/supabase.server";
 import type { MarkerType } from "~/components/map.client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const loader: LoaderFunction = async () => {
     return json({});
@@ -11,7 +11,14 @@ export const loader: LoaderFunction = async () => {
 
 export async function action({ request }: ActionFunctionArgs) {
     const formData = await request.formData();
+    // 폼 데이터에서 인증 정보 가져오기
+    const authDataStr = formData.get("authData") as string;
+    if (!authDataStr) {
+        return json({ error: '사용자 인증이 필요합니다.' }, { status: 401 });
+    }
 
+    const authData = JSON.parse(authDataStr);
+    const userId = authData.user.uid;
     // 기본 정보
     const name = formData.get("name") as string;
     const latitude = parseFloat(formData.get("latitude") as string);
@@ -61,7 +68,8 @@ export async function action({ request }: ActionFunctionArgs) {
                 fee_percentage: feePercentage,
                 rating: 0,
                 description,
-                type
+                type,
+                created_by: userId
             }
         ]);
 
@@ -78,6 +86,14 @@ export default function AddMarker() {
     const [address, setAddress] = useState("");
     const [latitude, setLatitude] = useState("");
     const [longitude, setLongitude] = useState("");
+    const [authData, setAuthData] = useState<string | null>(null);
+
+    useEffect(() => {
+        const savedAuth = localStorage.getItem('pi_auth');
+        if (savedAuth) {
+            setAuthData(savedAuth);
+        }
+    }, []);
     // 주소로 위도/경도 검색
     const searchAddress = async () => {
         try {
@@ -103,6 +119,11 @@ export default function AddMarker() {
             <div className="max-w-2xl mx-auto">
                 <h2 className="text-3xl font-bold mb-6">새로운 장소 추가</h2>
                 <Form method="post" className="space-y-6" encType="multipart/form-data">
+                    <input
+                        type="hidden"
+                        name="authData"
+                        value={authData || ''}
+                    />
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium mb-1">
                             장소명
