@@ -161,7 +161,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           {/* 로고 영역 */}
           <div className="flex items-center space-x-4">
-            <img src="/assets/picoin_logo.png" alt="Logo" className="w-12 h-12 rounded-full" />
+            <img src="/picoin_logo.png" alt="Logo" className="w-12 h-12 rounded-full" />
             <h1 className="text-xl font-bold">Pi-Moderator</h1>
           </div>
 
