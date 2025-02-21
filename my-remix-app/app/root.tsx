@@ -292,11 +292,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <script src="https://sdk.minepi.com/pi-sdk.js"></script>
         <script dangerouslySetInnerHTML={{
-          __html: `
-            document.addEventListener('DOMContentLoaded', function() {
-              window.Pi.init({ version: "2.0"});
-            });
-          `
+          __html: `Pi.init({ version: "2.0" })`
         }} />
       </head>
       <body className="flex flex-col min-h-screen"> {/* flex와 min-h-screen 추가 */}
