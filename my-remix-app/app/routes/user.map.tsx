@@ -1,9 +1,12 @@
 import { Form, useNavigate } from "@remix-run/react";
 import type { ActionFunctionArgs, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import { ClientOnly } from "remix-utils/client-only";
 import { supabase } from "~/lib/supabase.server";
 import type { MarkerType } from "~/components/map.client";
 import { useState, useEffect } from "react";
+import Quill from "~/components/quill.client";
+
 
 export const loader: LoaderFunction = async () => {
     return json({});
@@ -87,6 +90,7 @@ export default function AddMarker() {
     const [latitude, setLatitude] = useState("");
     const [longitude, setLongitude] = useState("");
     const [authData, setAuthData] = useState<string | null>(null);
+    const [description, setDescription] = useState("");
 
     useEffect(() => {
         const savedAuth = localStorage.getItem('pi_auth');
@@ -260,13 +264,18 @@ export default function AddMarker() {
                         <label htmlFor="description" className="block text-sm font-medium mb-1">
                             상세 설명
                         </label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            rows={6}
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <ClientOnly fallback={<div className="h-[300px] bg-gray-100 animate-pulse rounded-lg" />}>
+                            {() => (
+                                <>
+                                    <Quill defaultValue={description} />
+                                    <input
+                                        type="hidden"
+                                        name="description"
+                                        value={description}
+                                    />
+                                </>
+                            )}
+                        </ClientOnly>
                     </div>
 
                     <div className="flex gap-4 pt-6">
