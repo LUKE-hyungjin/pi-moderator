@@ -5,7 +5,7 @@ import { ClientOnly } from "remix-utils/client-only";
 import { supabase } from "~/lib/supabase.server";
 import type { MarkerType } from "~/components/map.client";
 import { useState, useEffect } from "react";
-import Quill from "~/components/quill.client";
+import Sunediter from "~/components/sunediter.client";
 import type { LatLng } from "leaflet";
 import SaveMap from "~/components/savemap.client";
 
@@ -144,13 +144,6 @@ export default function AddMarker() {
                         />
                     </div>
 
-                    {/* 지도 */}
-                    <div className="h-[400px] bg-gray-100 rounded-lg overflow-hidden">
-                        <ClientOnly fallback={<div>지도를 불러오는 중...</div>}>
-                            {() => <SaveMap position={position} onMapClick={handleMapClick} />}
-                        </ClientOnly>
-                    </div>
-
                     {/* 선택된 주소 표시 */}
                     <div>
                         <label htmlFor="address" className="block text-sm font-medium mb-1">
@@ -166,6 +159,15 @@ export default function AddMarker() {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
+
+                    {/* 지도 */}
+                    <div className="h-[400px] bg-gray-100 rounded-lg overflow-hidden">
+                        <ClientOnly fallback={<div>지도를 불러오는 중...</div>}>
+                            {() => <SaveMap position={position} onMapClick={handleMapClick} />}
+                        </ClientOnly>
+                    </div>
+
+
 
                     {/* 위도/경도 hidden 필드 */}
                     <input type="hidden" name="latitude" value={position[0]} />
@@ -299,27 +301,26 @@ export default function AddMarker() {
                                 >
                                     <option value="personal">개인</option>
                                     <option value="corporate">법인</option>
-                                    <option value="both">모두</option>
+                                    <option value="both">모두(개인, 법인)</option>
                                 </select>
+                            </div>
+                            <div>
+                                <label htmlFor="feePercentage" className="block text-sm font-medium mb-1">
+                                    1파이당 수수료 (%)
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="100"
+                                    id="feePercentage"
+                                    name="feePercentage"
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
                             </div>
                         </>
                     )}
-
-                    <div>
-                        <label htmlFor="feePercentage" className="block text-sm font-medium mb-1">
-                            1파이당 수수료 (%)
-                        </label>
-                        <input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            max="100"
-                            id="feePercentage"
-                            name="feePercentage"
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
 
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium mb-1">
@@ -328,7 +329,7 @@ export default function AddMarker() {
                         <ClientOnly fallback={<div className="h-[300px] bg-gray-100 animate-pulse rounded-lg" />}>
                             {() => (
                                 <>
-                                    <Quill
+                                    <Sunediter
                                         defaultValue={description}
                                         onChange={(value) => setDescription(value)}
                                     />

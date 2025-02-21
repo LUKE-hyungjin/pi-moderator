@@ -10,6 +10,7 @@ import {
 import type { LinksFunction } from "@remix-run/node";
 import { useState, useEffect } from "react";
 import { supabase } from "~/lib/supabase.client";
+import { SpeedInsights } from "@vercel/speed-insights/remix";
 
 import "./tailwind.css";
 
@@ -293,6 +294,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </footer>
+        <SpeedInsights />
         <ScrollRestoration />
         <Scripts />
       </body>
