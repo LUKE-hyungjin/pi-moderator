@@ -104,6 +104,11 @@ const Navbar = () => {
   };
   const authenticateUser = async () => {
     try {
+      if (!window.Pi) {
+        alert('Pi Network SDK를 찾을 수 없습니다. Pi Browser에서 접속해주세요.');
+        return;
+      }
+
       const scopes: Array<Scope> = ['username', 'payments'];
       const authResult = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
 
@@ -117,8 +122,10 @@ const Navbar = () => {
         })
       });
 
-      // Supabase에 사용자 저장
+      const responseData = await verifyResponse.json();
+
       if (verifyResponse.ok) {
+        // Supabase에 사용자 저장
         const { data, error } = await supabase
           .from('users')
           .upsert({
@@ -128,17 +135,31 @@ const Navbar = () => {
           }, {
             onConflict: 'username'
           });
-      }
 
-      if (verifyResponse.ok) {
+        if (error) {
+          alert('사용자 정보 저장에 실패했습니다. 다시 시도해주세요.');
+          return;
+        }
+
         setAuth(authResult);
         localStorage.setItem('pi_auth', JSON.stringify(authResult));
+        alert(`환영합니다! ${authResult.user.username}님의 인증이 완료되었습니다.`);
       } else {
-        throw new Error('User verification failed');
+        alert(`인증 실패: ${responseData.error || '사용자 검증에 실패했습니다.'}`);
       }
     } catch (error) {
       console.error("Authentication error:", error);
-      alert('인증에 실패했습니다.');
+      if (error instanceof Error) {
+        if (error.message.includes('User cancelled')) {
+          alert('사용자가 인증을 취소했습니다.');
+        } else if (error.message.includes('Network error')) {
+          alert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
+        } else {
+          alert(`인증 오류: ${error.message}`);
+        }
+      } else {
+        alert('알 수 없는 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
@@ -235,7 +256,16 @@ const Navbar = () => {
               <span id="mobileUserStatus" className="block text-white mb-4">
                 {auth ? `사용자: ${auth.user.username}` : '로그인이 필요합니다'}
               </span>
-              {!auth && (
+              {auth ? (
+                <div className="flex space-x-2">
+                  <button
+                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                    onClick={authenticateUser}
+                  >
+                    재인증
+                  </button>
+                </div>
+              ) : (
                 <button
                   id="mobilePiAuthButton"
                   className="w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
