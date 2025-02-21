@@ -6,7 +6,8 @@ import { supabase } from "~/lib/supabase.server";
 import type { MarkerType } from "~/components/map.client";
 import { useState, useEffect } from "react";
 import Quill from "~/components/quill.client";
-
+import type { LatLng } from "leaflet";
+import SaveMap from "~/components/savemap.client";
 
 export const loader: LoaderFunction = async () => {
     return json({});
@@ -89,11 +90,11 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function AddMarker() {
     const navigate = useNavigate();
     const [address, setAddress] = useState("");
-    const [latitude, setLatitude] = useState("");
-    const [longitude, setLongitude] = useState("");
     const [authData, setAuthData] = useState<string | null>(null);
     const [description, setDescription] = useState("");
     const [type, setType] = useState<MarkerType>('education');
+    const [position, setPosition] = useState<[number, number]>([37.5665, 126.9780]); // 서울 중심 좌표
+
 
     useEffect(() => {
         const savedAuth = localStorage.getItem('pi_auth');
@@ -101,23 +102,20 @@ export default function AddMarker() {
             setAuthData(savedAuth);
         }
     }, []);
-    // 주소로 위도/경도 검색
-    const searchAddress = async () => {
+
+    const handleMapClick = async (e: { latlng: LatLng }) => {
+        const { lat, lng } = e.latlng;
+        setPosition([lat, lng]);
+
+        // 선택한 위치의 주소 가져오기
         try {
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
             );
             const data = await response.json();
-
-            if (data && data.length > 0) {
-                setLatitude(data[0].lat);
-                setLongitude(data[0].lon);
-            } else {
-                alert("주소를 찾을 수 없습니다.");
-            }
+            setAddress(data.display_name);
         } catch (error) {
-            console.error("Error searching address:", error);
-            alert("주소 검색 중 오류가 발생했습니다.");
+            console.error("Error fetching address:", error);
         }
     };
 
@@ -131,9 +129,11 @@ export default function AddMarker() {
                         name="authData"
                         value={authData || ''}
                     />
+
+                    {/* 장소 이름 입력 필드 */}
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium mb-1">
-                            장소명
+                            장소 이름
                         </label>
                         <input
                             type="text"
@@ -144,62 +144,32 @@ export default function AddMarker() {
                         />
                     </div>
 
-                    <div>
-                        <label htmlFor="address" className="block text-sm font-medium mb-1">
-                            주소
-                        </label>
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                id="address"
-                                name="address"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                                required
-                                className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            <button
-                                type="button"
-                                onClick={searchAddress}
-                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            >
-                                주소 검색
-                            </button>
-                        </div>
+                    {/* 지도 */}
+                    <div className="h-[400px] bg-gray-100 rounded-lg overflow-hidden">
+                        <ClientOnly fallback={<div>지도를 불러오는 중...</div>}>
+                            {() => <SaveMap position={position} onMapClick={handleMapClick} />}
+                        </ClientOnly>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="latitude" className="block text-sm font-medium mb-1">
-                                위도
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                id="latitude"
-                                name="latitude"
-                                value={latitude}
-                                onChange={(e) => setLatitude(e.target.value)}
-                                required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="longitude" className="block text-sm font-medium mb-1">
-                                경도
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                id="longitude"
-                                name="longitude"
-                                value={longitude}
-                                onChange={(e) => setLongitude(e.target.value)}
-                                required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
+                    {/* 선택된 주소 표시 */}
+                    <div>
+                        <label htmlFor="address" className="block text-sm font-medium mb-1">
+                            선택된 주소
+                        </label>
+                        <input
+                            type="text"
+                            id="address"
+                            name="address"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
                     </div>
+
+                    {/* 위도/경도 hidden 필드 */}
+                    <input type="hidden" name="latitude" value={position[0]} />
+                    <input type="hidden" name="longitude" value={position[1]} />
                     <div>
                         <label htmlFor="phone" className="block text-sm font-medium mb-1">
                             전화번호
@@ -213,18 +183,6 @@ export default function AddMarker() {
                         />
                     </div>
 
-                    <div>
-                        <label htmlFor="address" className="block text-sm font-medium mb-1">
-                            주소
-                        </label>
-                        <input
-                            type="text"
-                            id="address"
-                            name="address"
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
 
                     <div>
                         <label htmlFor="image" className="block text-sm font-medium mb-1">
