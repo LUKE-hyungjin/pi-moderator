@@ -23,6 +23,7 @@ export const loader: LoaderFunction = async () => {
         position: [marker.latitude, marker.longitude] as [number, number],
         name: marker.name,
         address: marker.address,
+        phone: marker.number,
         feePercentage: marker.fee_percentage,
         description: marker.description,
         created_at: marker.created_at,

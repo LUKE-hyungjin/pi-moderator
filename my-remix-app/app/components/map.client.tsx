@@ -39,6 +39,7 @@ export interface MarkerData {
     position: LatLngTuple;
     name: string;
     address: string;
+    phone: string;
     feePercentage: number;
     description: string;
     created_at: string;

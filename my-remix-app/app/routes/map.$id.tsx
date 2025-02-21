@@ -10,6 +10,7 @@ interface MarkerDetail {
     latitude: number;
     longitude: number;
     address: string;
+    phone: string;
     image_url: string;
     fee_percentage: number;
     description: string;
@@ -34,6 +35,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 
 export default function MarkerDetail() {
     const { marker } = useLoaderData<{ marker: MarkerDetail }>();
+
     const createdAt = new Date(marker.created_at).toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: 'long',
@@ -46,7 +48,6 @@ export default function MarkerDetail() {
         <div className="container mx-auto px-6 py-8">
             <div className="max-w-4xl mx-auto">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-3xl font-bold">{marker.name}</h2>
                     <Link
                         to="/map"
                         className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg"
@@ -55,55 +56,48 @@ export default function MarkerDetail() {
                     </Link>
                 </div>
 
-                <div className="bg-[rgba(255,255,255,0.05)] rounded-lg p-8 space-y-8">
-                    {/* 대표 이미지 */}
-                    <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
-                        {marker.image_url ? (
-                            <img
-                                src={marker.image_url}
-                                alt={marker.name}
-                                className="w-full h-full object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-500">
-                                대표 이미지 없음
+                <div className="bg-[rgba(255,255,255,0.05)] rounded-lg p-8">
+                    <div className="flex gap-8 mb-8">
+                        {/* 왼쪽 대표 이미지 */}
+                        <div className="w-1/3">
+                            <div className="aspect-square bg-[rgba(255,255,255,0.03)] rounded-lg overflow-hidden">
+                                {marker.image_url ? (
+                                    <img
+                                        src={marker.image_url}
+                                        alt={marker.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                        대표 이미지 없음
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
+                        </div>
 
-                    {/* 기본 정보 */}
-                    <div className="grid grid-cols-2 gap-6">
-                        <div>
-                            <h3 className="text-lg font-semibold mb-4">기본 정보</h3>
-                            <div className="space-y-2">
+                        {/* 오른쪽 정보 */}
+                        <div className="flex-1">
+                            <h2 className="text-3xl font-bold mb-4">{marker.name}</h2>
+                            <div className="space-y-2 text-lg">
                                 <p>
-                                    <span className="font-medium">카테고리:</span>{' '}
-                                    {marker.type === 'education' ? '교육' : '중계'}
-                                </p>
-                                <p>
-                                    <span className="font-medium">주소:</span>{' '}
+                                    <span className="text-gray-400">주소:</span>{' '}
                                     {marker.address}
                                 </p>
                                 <p>
-                                    <span className="font-medium">1파이당 수수료:</span>{' '}
-                                    {marker.fee_percentage}%
+                                    <span className="text-gray-400">전화번호:</span>{' '}
+                                    {marker.phone || '등록된 전화번호가 없습니다'}
                                 </p>
                                 <p>
-                                    <span className="font-medium">등록일:</span>{' '}
+                                    <span className="text-gray-400">등록일:</span>{' '}
                                     {createdAt}
                                 </p>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-semibold mb-4">위치 정보</h3>
-                            <div className="space-y-2">
                                 <p>
-                                    <span className="font-medium">위도:</span>{' '}
-                                    {marker.latitude}
+                                    <span className="text-gray-400">카테고리:</span>{' '}
+                                    {marker.type === 'education' ? '교육' : '중계'}
                                 </p>
                                 <p>
-                                    <span className="font-medium">경도:</span>{' '}
-                                    {marker.longitude}
+                                    <span className="text-gray-400">1파이당 수수료:</span>{' '}
+                                    {marker.fee_percentage}%
                                 </p>
                             </div>
                         </div>
@@ -113,7 +107,10 @@ export default function MarkerDetail() {
                     <div>
                         <h3 className="text-lg font-semibold mb-4">상세 설명</h3>
                         <div className="bg-[rgba(255,255,255,0.03)] rounded-lg p-6">
-                            <p className="whitespace-pre-wrap">{marker.description}</p>
+                            <div
+                                className="prose prose-invert max-w-none"
+                                dangerouslySetInnerHTML={{ __html: marker.description }}
+                            />
                         </div>
                     </div>
 
@@ -129,3 +126,4 @@ export default function MarkerDetail() {
         </div>
     );
 }
+

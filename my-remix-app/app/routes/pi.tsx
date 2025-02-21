@@ -782,7 +782,7 @@ export default function Pi() {
 
                     {/* 목차 부분 */}
                     <div className={`w-full md:w-2/5 lg:w-1/3 ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
-                        <div className="bg-[#242424] p-4 md:p-6 rounded-lg md:h-[calc(100vh-2rem)] md:sticky md:top-4">
+                        <div className="bg-[#242424] p-4 md:p-6 rounded-lg md:h-[calc(100vh-2rem)] md:sticky md:top-4 h-fit">
                             <h2 className="text-2xl font-bold mb-4 md:mb-6 hidden md:block">목차</h2>
                             <nav className="space-y-2 md:space-y-4">
                                 {piContent.map((section) => (

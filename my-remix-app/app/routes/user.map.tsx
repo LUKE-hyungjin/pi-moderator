@@ -27,6 +27,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const latitude = parseFloat(formData.get("latitude") as string);
     const longitude = parseFloat(formData.get("longitude") as string);
     const address = formData.get("address") as string;
+    const phone = formData.get("phone") as string;
     const imageFile = formData.get("image") as File;
     const feePercentage = parseFloat(formData.get("feePercentage") as string);
     const description = formData.get("description") as string;
@@ -67,6 +68,7 @@ export async function action({ request }: ActionFunctionArgs) {
                 latitude,
                 longitude,
                 address,
+                phone,
                 image_url: imageUrl, // 이미지 URL 저장
                 fee_percentage: feePercentage,
                 rating: 0,
@@ -91,6 +93,7 @@ export default function AddMarker() {
     const [longitude, setLongitude] = useState("");
     const [authData, setAuthData] = useState<string | null>(null);
     const [description, setDescription] = useState("");
+    const [type, setType] = useState<MarkerType>('education');
 
     useEffect(() => {
         const savedAuth = localStorage.getItem('pi_auth');
@@ -197,21 +200,17 @@ export default function AddMarker() {
                             />
                         </div>
                     </div>
-
                     <div>
-                        <label htmlFor="type" className="block text-sm font-medium mb-1">
-                            카테고리
+                        <label htmlFor="phone" className="block text-sm font-medium mb-1">
+                            전화번호
                         </label>
-                        <select
-                            id="type"
-                            name="type"
-                            required
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="+1 (234) 567-8900"
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="education">교육</option>
-                            <option value="relay">중계</option>
-                            <option value="tax">세무</option>
-                        </select>
+                        />
                     </div>
 
                     <div>
@@ -245,6 +244,110 @@ export default function AddMarker() {
                     </div>
 
                     <div>
+                        <label htmlFor="type" className="block text-sm font-medium mb-1">
+                            카테고리
+                        </label>
+                        <select
+                            id="type"
+                            name="type"
+                            value={type}
+                            onChange={(e) => setType(e.target.value as MarkerType)}
+                            required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="education">교육</option>
+                            <option value="relay">중계</option>
+                            <option value="tax">세무</option>
+                        </select>
+                    </div>
+
+                    {/* 카테고리별 추가 필드 */}
+                    {type === 'education' && (
+                        <>
+                            <div>
+                                <label htmlFor="educationType" className="block text-sm font-medium mb-1">
+                                    교육 유형
+                                </label>
+                                <select
+                                    id="educationType"
+                                    name="educationType"
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="offline">오프라인</option>
+                                    <option value="online">온라인</option>
+                                    <option value="hybrid">하이브리드</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="capacity" className="block text-sm font-medium mb-1">
+                                    수용 인원
+                                </label>
+                                <input
+                                    type="number"
+                                    id="capacity"
+                                    name="capacity"
+                                    min="1"
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    {type === 'relay' && (
+                        <>
+                            <div>
+                                <label htmlFor="relayType" className="block text-sm font-medium mb-1">
+                                    중계 방식
+                                </label>
+                                <select
+                                    id="relayType"
+                                    name="relayType"
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="direct">직접 중계</option>
+                                    <option value="agency">대행</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="availableTime" className="block text-sm font-medium mb-1">
+                                    운영 시간
+                                </label>
+                                <input
+                                    type="text"
+                                    id="availableTime"
+                                    name="availableTime"
+                                    placeholder="예: 09:00-18:00"
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    {type === 'tax' && (
+                        <>
+                            <div>
+                                <label htmlFor="taxService" className="block text-sm font-medium mb-1">
+                                    세무 서비스
+                                </label>
+                                <select
+                                    id="taxService"
+                                    name="taxService"
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="personal">개인</option>
+                                    <option value="corporate">법인</option>
+                                    <option value="both">모두</option>
+                                </select>
+                            </div>
+                        </>
+                    )}
+
+                    <div>
                         <label htmlFor="feePercentage" className="block text-sm font-medium mb-1">
                             1파이당 수수료 (%)
                         </label>
@@ -267,7 +370,10 @@ export default function AddMarker() {
                         <ClientOnly fallback={<div className="h-[300px] bg-gray-100 animate-pulse rounded-lg" />}>
                             {() => (
                                 <>
-                                    <Quill defaultValue={description} />
+                                    <Quill
+                                        defaultValue={description}
+                                        onChange={(value) => setDescription(value)}
+                                    />
                                     <input
                                         type="hidden"
                                         name="description"
@@ -294,7 +400,7 @@ export default function AddMarker() {
                         </button>
                     </div>
                 </Form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
