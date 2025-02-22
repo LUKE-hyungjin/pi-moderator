@@ -3,7 +3,7 @@ import { Link } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Pi Exchange - Home" },
+    { title: "Pi Moderator - Home" },
     { name: "description", content: "파이코인 커뮤니티의 중심, Pi Moderator에서 모든 정보를 확인하세요!" },
   ];
 };
@@ -15,7 +15,7 @@ export default function Index() {
         {/* 히어로 섹션 */}
         <section className="text-center">
           <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-600 text-transparent bg-clip-text">
-            파이코인의 모든 것, Pi Exchange
+            파이코인의 모든 것, Pi Moderator
           </h1>
           <p className="text-xl text-gray-300 mb-8">
             안전하고 신뢰할 수 있는 파이코인 정보와 서비스를 제공합니다
