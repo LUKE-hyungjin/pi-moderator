@@ -81,7 +81,7 @@ const Navbar = () => {
 
   useEffect(() => {
     if (window.Pi) {
-      window.Pi.init({ version: "2.0", sandbox: true });
+      window.Pi.init({ version: "2.0", sandbox: false });
     }
   }, []);
 
@@ -303,14 +303,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
         <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-        <script dangerouslySetInnerHTML={{
-          __html: `
-          Pi.init({ 
-              version: "2.0", 
-              sandbox: "false" 
-          });
-        `
-        }} />
       </head>
       <body className="flex flex-col min-h-screen"> {/* flex와 min-h-screen 추가 */}
         <Navbar />
