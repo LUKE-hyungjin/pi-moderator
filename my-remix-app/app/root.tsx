@@ -81,7 +81,7 @@ const Navbar = () => {
 
   useEffect(() => {
     if (window.Pi) {
-      window.Pi.init({ version: "2.0", sandbox: false });
+      window.Pi.init({ version: "2.0", sandbox: true });
     }
   }, []);
 
