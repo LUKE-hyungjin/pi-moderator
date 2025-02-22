@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { FaCopy } from 'react-icons/fa';
 import { Link, useNavigate } from '@remix-run/react';
 import { supabase } from '~/lib/supabase.client';
 

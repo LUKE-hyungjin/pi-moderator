@@ -105,12 +105,20 @@ const Navbar = () => {
   const authenticateUser = async () => {
     try {
       if (!window.Pi) {
+        console.error('Pi SDK not found');
         alert('Pi Network SDK를 찾을 수 없습니다. Pi Browser에서 접속해주세요.');
         return;
       }
 
+      console.log('Pi SDK initialized:', window.Pi.initialized);
+      console.log('Current environment:', import.meta.env.DEV ? 'Development' : 'Production');
+      console.log('Current URL:', window.location.href);
+
       const scopes: Array<Scope> = ['username', 'payments'];
+      console.log('Attempting authentication with scopes:', scopes);
+
       const authResult = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
+      console.log('Authentication result:', authResult);
 
       // 서버에서 사용자 검증
       const verifyResponse = await fetch('/api/pi', {
@@ -122,7 +130,9 @@ const Navbar = () => {
         })
       });
 
+      console.log('Verify response status:', verifyResponse.status);
       const responseData = await verifyResponse.json();
+      console.log('Verify response data:', responseData);
 
       if (verifyResponse.ok) {
         // Supabase에 사용자 저장
@@ -137,6 +147,7 @@ const Navbar = () => {
           });
 
         if (error) {
+          console.error('Supabase error:', error);
           alert('사용자 정보 저장에 실패했습니다. 다시 시도해주세요.');
           return;
         }
@@ -145,6 +156,7 @@ const Navbar = () => {
         localStorage.setItem('pi_auth', JSON.stringify(authResult));
         alert(`환영합니다! ${authResult.user.username}님의 인증이 완료되었습니다.`);
       } else {
+        console.error('Verification failed:', responseData);
         alert(`인증 실패: ${responseData.error || '사용자 검증에 실패했습니다.'}`);
       }
     } catch (error) {
@@ -292,7 +304,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <script src="https://sdk.minepi.com/pi-sdk.js"></script>
         <script dangerouslySetInnerHTML={{
-          __html: `Pi.init({ version: "2.0" })`
+          __html: `
+          Pi.init({ 
+              version: "2.0", 
+              sandbox: "false" 
+          });
+        `
         }} />
       </head>
       <body className="flex flex-col min-h-screen"> {/* flex와 min-h-screen 추가 */}
