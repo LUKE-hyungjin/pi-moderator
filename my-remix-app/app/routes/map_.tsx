@@ -3,6 +3,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { Map } from "~/components/map.client";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
+import { useSearchParams } from "@remix-run/react";
 import type { MarkerData, MarkerType } from "~/components/map.client";
 import { supabase } from "~/lib/supabase.server";
 import { useState } from "react";
@@ -35,10 +36,16 @@ export const loader: LoaderFunction = async () => {
 };
 
 export default function MapRoute() {
+    const [searchParams] = useSearchParams();
+    // URL 파라미터에서 type을 가져오고 타입 체크
+    const typeParam = searchParams.get('type');
+    const validTypes = ['all', 'education', 'relay', 'tax'];
+    const initialType = validTypes.includes(typeParam || '') ? typeParam as MarkerType : 'all';
+
     const { markers } = useLoaderData<{ markers: MarkerData[] }>();
     const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
-    const [selectedType, setSelectedType] = useState<'all' | MarkerType>('all');
-
+    // initialType을 selectedType의 초기값으로 설정
+    const [selectedType, setSelectedType] = useState<'all' | MarkerType>(initialType);
     return (
         <div className="container mx-auto px-4 py-6 sm:px-6 sm:py-8">
             <div className="max-w-6xl mx-auto">
@@ -92,7 +99,7 @@ export default function MapRoute() {
                                     <Map
                                         markers={markers}
                                         onMarkerClick={setSelectedMarker}
-                                        selectedType={selectedType}
+                                        selectedType={selectedType}  // 선택된 타입 전달
                                     />
                                 )}
                             </ClientOnly>

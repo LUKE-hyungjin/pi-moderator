@@ -51,6 +51,59 @@ declare global {
   }
 }
 
+// Alert 모달 컴포넌트
+const AlertModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: () => void; message: string }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* 배경 오버레이 */}
+      <div
+        className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+        onClick={onClose}
+      ></div>
+
+      {/* 모달 컨텐츠 */}
+      <div className="bg-[#242424] rounded-lg p-6 max-w-lg w-full mx-4 relative z-10 border border-purple-500/20">
+        <div className="text-center">
+          {/* 성공 아이콘 */}
+          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-purple-500/20 mb-4">
+            <svg
+              className="h-6 w-6 text-purple-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+
+          {/* 메시지 */}
+          <div className="mt-2 text-center px-4">
+            <p className="text-white text-lg whitespace-pre-line">{message}</p>
+          </div>
+
+          {/* 확인 버튼 */}
+          <div className="mt-6">
+            <button
+              type="button"
+              className="w-full rounded-lg bg-purple-500 px-4 py-2 text-white hover:bg-purple-600 transition-colors duration-200"
+              onClick={onClose}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -78,6 +131,9 @@ const Navbar = () => {
   const [auth, setAuth] = useState<AuthResult | null>(null);
   const location = useLocation();
   const currentPath = location.pathname;
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   useEffect(() => {
     if (window.Pi) {
@@ -166,10 +222,11 @@ const Navbar = () => {
         localStorage.setItem('pi_auth', JSON.stringify(authResult));
 
         if (canReceiveReward) {
-          alert(`환영합니다! ${authResult.user.username}님의 인증이 완료되었습니다.\n일일 로그인 보상 1포인트가 지급되었습니다!`);
+          setAlertMessage(`환영합니다!\n ${authResult.user.username}님의 인증이 완료되었습니다.\n일일 로그인 보상 1 TOKEN 지급되었습니다!`);
         } else {
-          alert(`환영합니다! ${authResult.user.username}님의 인증이 완료되었습니다.`);
+          setAlertMessage(`환영합니다!\n ${authResult.user.username}님의 인증이 완료되었습니다.`);
         }
+        setIsAlertOpen(true); setIsAlertOpen(true);
       } else {
         console.error('Verification failed:', responseData);
         alert(`인증 실패: ${responseData.error || '사용자 검증에 실패했습니다.'}`);
@@ -205,82 +262,27 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-[#242424] text-white p-4">
-      <div className="container mx-auto">
-        <div className="flex justify-between items-center">
-          {/* 로고 영역 */}
-          <div className="flex items-center space-x-4">
-            <img src="/picoin_logo.png" alt="Logo" className="w-12 h-12 rounded-full" />
-            <h1 className="text-xl font-bold">Pi-Moderator</h1>
-          </div>
+    <>
+      <nav className="bg-[#242424] text-white p-4">
+        <div className="container mx-auto">
+          <div className="flex justify-between items-center">
+            {/* 로고 영역 */}
+            <div className="flex items-center space-x-4">
+              <img src="/picoin_logo.png" alt="Logo" className="w-12 h-12 rounded-full" />
+              <h1 className="text-xl font-bold">Pi-Moderator</h1>
+            </div>
 
-          {/* 데스크톱 메뉴 */}
-          <div className="hidden md:flex items-center space-x-12">
-            <Link to="/" className={`text-lg font-medium ${isActivePath('/')}`}>Home</Link>
-            <Link to="/pi" className={`text-lg font-medium ${isActivePath('/pi')}`}>Pi</Link>
-            <Link to="/map" className={`text-lg font-medium ${isActivePath('/map')}`}>Map</Link>
-            <Link to="/user" className={`text-lg font-medium ${isActivePath('/user')}`}>User</Link>
-          </div>
+            {/* 데스크톱 메뉴 */}
+            <div className="hidden md:flex items-center space-x-12">
+              <Link to="/" className={`text-lg font-medium ${isActivePath('/')}`}>Home</Link>
+              <Link to="/pi" className={`text-lg font-medium ${isActivePath('/pi')}`}>Pi</Link>
+              <Link to="/map" className={`text-lg font-medium ${isActivePath('/map')}`}>Map</Link>
+              <Link to="/user" className={`text-lg font-medium ${isActivePath('/user')}`}>User</Link>
+            </div>
 
-          {/* 데스크톱 인증 영역 */}
-          <div className="hidden md:flex items-center space-x-4">
-            <span id="userStatus" className="text-white">
-              {auth ? `사용자: ${auth.user.username}` : '로그인이 필요합니다'}
-            </span>
-            {auth ? (
-              <div className="flex space-x-2">
-                <button
-                  className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-                  onClick={authenticateUser}
-                >
-                  재인증
-                </button>
-              </div>
-            ) : (
-              <button
-                id="piAuthButton"
-                className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-                onClick={authenticateUser}
-              >
-                Pi Network 인증
-              </button>
-            )}
-          </div>
-
-          {/* 모바일 메뉴 버튼 */}
-          <button
-            className="md:hidden text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {isMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
-        </div>
-
-        {/* 모바일 메뉴 */}
-        <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} pt-4`}>
-          <div className="flex flex-col space-y-4">
-            <Link to="/" className={`py-2 ${isActivePath('/')}`} onClick={() => setIsMenuOpen(false)}>
-              Home
-            </Link>
-            <Link to="/pi" className={`py-2 ${isActivePath('/pi')}`} onClick={() => setIsMenuOpen(false)}>
-              Pi
-            </Link>
-            <Link to="/map" className={`py-2 ${isActivePath('/map')}`} onClick={() => setIsMenuOpen(false)}>
-              Map
-            </Link>
-            <Link to="/user" className={`py-2 ${isActivePath('/user')}`} onClick={() => setIsMenuOpen(false)}>
-              User
-            </Link>
-
-            {/* 모바일 인증 영역 */}
-            <div className="pt-4 border-t border-gray-600">
-              <span id="mobileUserStatus" className="block text-white mb-4">
+            {/* 데스크톱 인증 영역 */}
+            <div className="hidden md:flex items-center space-x-4">
+              <span id="userStatus" className="text-white">
                 {auth ? `사용자: ${auth.user.username}` : '로그인이 필요합니다'}
               </span>
               {auth ? (
@@ -294,18 +296,81 @@ const Navbar = () => {
                 </div>
               ) : (
                 <button
-                  id="mobilePiAuthButton"
-                  className="w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                  id="piAuthButton"
+                  className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
                   onClick={authenticateUser}
                 >
                   Pi Network 인증
                 </button>
               )}
             </div>
+
+            {/* 모바일 메뉴 버튼 */}
+            <button
+              className="md:hidden text-white"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {isMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
+
+          {/* 모바일 메뉴 */}
+          <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} pt-4`}>
+            <div className="flex flex-col space-y-4">
+              <Link to="/" className={`py-2 ${isActivePath('/')}`} onClick={() => setIsMenuOpen(false)}>
+                Home
+              </Link>
+              <Link to="/pi" className={`py-2 ${isActivePath('/pi')}`} onClick={() => setIsMenuOpen(false)}>
+                Pi
+              </Link>
+              <Link to="/map" className={`py-2 ${isActivePath('/map')}`} onClick={() => setIsMenuOpen(false)}>
+                Map
+              </Link>
+              <Link to="/user" className={`py-2 ${isActivePath('/user')}`} onClick={() => setIsMenuOpen(false)}>
+                User
+              </Link>
+
+              {/* 모바일 인증 영역 */}
+              <div className="pt-4 border-t border-gray-600">
+                <span id="mobileUserStatus" className="block text-white mb-4">
+                  {auth ? `사용자: ${auth.user.username}` : '로그인이 필요합니다'}
+                </span>
+                {auth ? (
+                  <div className="flex space-x-2">
+                    <button
+                      className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                      onClick={authenticateUser}
+                    >
+                      재인증
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    id="mobilePiAuthButton"
+                    className="w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                    onClick={authenticateUser}
+                  >
+                    Pi Network 인증
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      {/* 알림 모달 */}
+      <AlertModal
+        isOpen={isAlertOpen}
+        onClose={() => setIsAlertOpen(false)}
+        message={alertMessage}
+      />
+    </>
   );
 };
 
