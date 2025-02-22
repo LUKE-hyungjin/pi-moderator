@@ -11,6 +11,11 @@ interface Marker {
     fee_percentage: number;
 }
 
+interface UserData {
+    points: number;
+    last_login_date: string;
+}
+
 interface AuthResult {
     accessToken: string;
     user: {
@@ -22,7 +27,7 @@ interface AuthResult {
 export default function User() {
     const [auth, setAuth] = useState<AuthResult | null>(null);
     const [markers, setMarkers] = useState<Marker[]>([]);
-    const [copied, setCopied] = useState(false);
+    const [userData, setUserData] = useState<UserData | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,8 +35,8 @@ export default function User() {
         if (savedAuth) {
             const authData = JSON.parse(savedAuth);
             setAuth(authData);
-            // 사용자의 마커 데이터 불러오기
             fetchUserMarkers(authData.user.uid);
+            fetchUserData(authData.user.uid);
         }
     }, []);
 
@@ -45,6 +50,37 @@ export default function User() {
         if (data) {
             setMarkers(data);
         }
+    };
+
+    const fetchUserData = async (userId: string) => {
+        try {
+            const { data, error } = await supabase
+                .from('users')
+                .select('points, last_login_date')
+                .eq('id', userId)
+                .single();
+
+            if (error) throw error;
+            setUserData(data);
+        } catch (error) {
+            console.error('사용자 데이터 불러오기 실패:', error);
+        }
+    };
+
+    const getNextRewardTime = () => {
+        if (!userData?.last_login_date) return '지금';
+
+        const lastLogin = new Date(userData.last_login_date);
+        const nextReward = new Date(lastLogin.getTime() + 24 * 60 * 60 * 1000);
+        const now = new Date();
+        const timeLeft = nextReward.getTime() - now.getTime();
+
+        if (timeLeft <= 0) return '지금';
+
+        const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+        const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+        return `${hoursLeft}시간 ${minutesLeft}분 후`;
     };
 
     if (!auth) {
@@ -106,6 +142,18 @@ export default function User() {
                             >
                                 장소 추가하기
                             </button>
+                        </div>
+                        {/* 포인트 정보 */}
+                        <div className="mt-6 p-4 bg-gray-700 rounded-lg">
+                            <div className="mb-4">
+                                <label className="text-gray-400 block mb-2">보유 토큰</label>
+                                <p className="text-2xl font-semibold text-white">
+                                    {userData?.points || 0}
+                                </p>
+                            </div>
+                            <div className="text-sm text-gray-400">
+                                다음 로그인 보상 가능 시간: {getNextRewardTime()}
+                            </div>
                         </div>
                     </div>
                 </div>

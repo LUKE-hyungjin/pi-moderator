@@ -733,7 +733,7 @@ const piContent: Section[] = [
 
 export default function Pi() {
     const [selectedSection, setSelectedSection] = useState("intro");  // 기본값으로 intro 선택
-    const [isMenuOpen, setIsMenuOpen] = useState(false);  // 모바일 메뉴 상태 추가
+    const [isMenuOpen, setIsMenuOpen] = useState(true);  // 모바일 메뉴 상태 추가
 
     // 현재 선택된 섹션이나 서브섹션 찾기
     const findSelectedContent = () => {

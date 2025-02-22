@@ -104,13 +104,6 @@ const Navbar = () => {
   };
   const authenticateUser = async () => {
     try {
-      if (!window.Pi) {
-        console.error('Pi SDK not found');
-        alert('Pi Network SDK를 찾을 수 없습니다. Pi Browser에서 접속해주세요.');
-        return;
-      }
-
-      console.log('Pi SDK initialized:', window.Pi.initialized);
       console.log('Current environment:', import.meta.env.DEV ? 'Development' : 'Production');
       console.log('Current URL:', window.location.href);
 
@@ -136,25 +129,47 @@ const Navbar = () => {
 
       if (verifyResponse.ok) {
         // Supabase에 사용자 저장
-        const { data, error } = await supabase
+        const { data: userData, error: fetchError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', authResult.user.uid)
+          .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') {
+          console.error('사용자 데이터 조회 실패:', fetchError);
+          throw new Error('사용자 데이터 조회에 실패했습니다.');
+        }
+
+        const now = new Date();
+        const lastLoginDate = userData?.last_login_date ? new Date(userData.last_login_date) : null;
+        const canReceiveReward = !lastLoginDate ||
+          (now.getTime() - lastLoginDate.getTime()) >= 24 * 60 * 60 * 1000;
+
+        // 사용자 정보 업데이트
+        const { error: updateError } = await supabase
           .from('users')
           .upsert({
             id: authResult.user.uid,
             username: authResult.user.username,
-            created_at: new Date().toISOString()
-          }, {
-            onConflict: 'username'
+            created_at: userData?.created_at || new Date().toISOString(),
+            last_login_date: now.toISOString(),
+            points: canReceiveReward ? (userData?.points || 0) + 1 : (userData?.points || 0)
           });
 
-        if (error) {
-          console.error('Supabase error:', error);
+        if (updateError) {
+          console.error('Supabase error:', updateError);
           alert('사용자 정보 저장에 실패했습니다. 다시 시도해주세요.');
           return;
         }
 
         setAuth(authResult);
         localStorage.setItem('pi_auth', JSON.stringify(authResult));
-        alert(`환영합니다! ${authResult.user.username}님의 인증이 완료되었습니다.`);
+
+        if (canReceiveReward) {
+          alert(`환영합니다! ${authResult.user.username}님의 인증이 완료되었습니다.\n일일 로그인 보상 1포인트가 지급되었습니다!`);
+        } else {
+          alert(`환영합니다! ${authResult.user.username}님의 인증이 완료되었습니다.`);
+        }
       } else {
         console.error('Verification failed:', responseData);
         alert(`인증 실패: ${responseData.error || '사용자 검증에 실패했습니다.'}`);

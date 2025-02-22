@@ -44,16 +44,44 @@ export default function MapRoute() {
             <div className="max-w-6xl mx-auto">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl sm:text-3xl font-bold">지도</h2>
-                    <select
-                        value={selectedType}
-                        onChange={(e) => setSelectedType(e.target.value as 'all' | MarkerType)}
-                        className="bg-gray-700 text-white px-3 py-1.5 rounded-lg text-sm"
-                    >
-                        <option value="all">전체</option>
-                        <option value="education">교육</option>
-                        <option value="relay">중계</option>
-                        <option value="tax">세무</option>
-                    </select>
+                    <div className="flex space-x-2">
+                        <button
+                            onClick={() => setSelectedType('all')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 
+                                ${selectedType === 'all'
+                                    ? 'bg-purple-500 text-white'
+                                    : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                        >
+                            전체
+                        </button>
+                        <button
+                            onClick={() => setSelectedType('education')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 
+                                ${selectedType === 'education'
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                        >
+                            교육
+                        </button>
+                        <button
+                            onClick={() => setSelectedType('relay')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 
+                                ${selectedType === 'relay'
+                                    ? 'bg-red-500 text-white'
+                                    : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                        >
+                            중계
+                        </button>
+                        <button
+                            onClick={() => setSelectedType('tax')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 
+                                ${selectedType === 'tax'
+                                    ? 'bg-green-500 text-white'
+                                    : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                        >
+                            세무
+                        </button>
+                    </div>
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-6">
