@@ -4,7 +4,7 @@ import { Link } from "@remix-run/react";
 export const meta: MetaFunction = () => {
   return [
     { title: "Pi Exchange - Home" },
-    { name: "description", content: "파이코인 커뮤니티의 중심, Pi Exchange에서 모든 정보를 확인하세요!" },
+    { name: "description", content: "파이코인 커뮤니티의 중심, Pi Moderator에서 모든 정보를 확인하세요!" },
   ];
 };
 
@@ -67,12 +67,12 @@ export default function Index() {
           </div>
 
           <div className="bg-[rgba(255,255,255,0.05)] rounded-xl p-6">
-            <h3 className="text-2xl font-bold mb-4 text-pink-400">최신 정보</h3>
+            <h3 className="text-2xl font-bold mb-4 text-yellow-400">최신 정보</h3>
             <p className="text-gray-300 mb-4">
               파이코인 메인넷, KYC, 마이닝 등
               최신 소식을 빠르게 전달합니다.
             </p>
-            <Link to="/pi" className="text-pink-400 hover:text-pink-300">
+            <Link to="/pi" className="text-pink-400 hover:text-yellow-300">
               소식 보기 →
             </Link>
           </div>
