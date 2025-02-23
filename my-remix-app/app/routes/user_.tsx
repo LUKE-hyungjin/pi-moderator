@@ -103,7 +103,8 @@ export default function User() {
                         </svg>
                     </div>
                     <h2 className="text-3xl font-bold mb-4 text-white">사용자 인증 필요</h2>
-                    <p className="text-gray-400 mb-6">서비스를 이용하기 위해서는 로그인이 필요합니다.</p>
+                    <p className="text-gray-400">서비스를 이용하기 위해서는 로그인이 필요합니다.</p>
+                    <p className="text-gray-400 mb-6">Pi Browser에 접속해서 로그인 해주세요.</p>
                 </div>
             </div>
         );

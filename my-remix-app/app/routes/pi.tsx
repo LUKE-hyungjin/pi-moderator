@@ -66,11 +66,6 @@ const piContent: Section[] = [
                     <p class="text-gray-300">▫ N차 : 아직 주기가 정해지지 않았음</p>
                 </div>
             </div>
-
-            <div class="bg-red-900/50 p-4 rounded-lg mt-6">
-                <p class="text-red-400">⛔ 댓글 금지</p>
-                <p class="text-yellow-500">⚠ 댓글은 Q&A 게시판을 이용해주세요.</p>
-            </div>
         </div>
         `
     },
