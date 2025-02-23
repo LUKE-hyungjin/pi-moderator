@@ -4,7 +4,7 @@ import L from 'leaflet';
 import 'leaflet.markercluster';
 import { useRef, useEffect } from 'react';
 
-const defaultPosition: LatLngTuple = [37.5665, 126.9780]; // 서울 좌표
+const defaultPosition: LatLngTuple = [37.5665, 126.9780]; // 서울 좌표 (기본값)
 
 // 마커 타입별 아이콘 정의
 const markerIcons = {
@@ -58,8 +58,28 @@ export interface MapProps {
 
 export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
     const mapRef = useRef<L.Map | null>(null);
-    const markersRef = useRef<L.Marker[]>([]);
     const markerLayerRef = useRef<L.LayerGroup | null>(null);
+
+    // 사용자 위치 가져오기
+    useEffect(() => {
+        if (!mapRef.current) return;
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    mapRef.current?.setView([latitude, longitude], 13);
+                },
+                () => {
+                    // 위치 권한이 거부되거나 오류 발생시 기본 위치(서울) 사용
+                    mapRef.current?.setView(defaultPosition, 13);
+                }
+            );
+        } else {
+            // 위치 정보를 지원하지 않는 브라우저는 기본 위치 사용
+            mapRef.current?.setView(defaultPosition, 13);
+        }
+    }, []);
 
     // 지도 초기화
     useEffect(() => {
@@ -83,6 +103,10 @@ export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 18,
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                tileSize: 512,
+                zoomOffset: -1,
+                crossOrigin: true,
+                keepBuffer: 2,
                 noWrap: true
             }).addTo(mapRef.current);
 
@@ -100,12 +124,13 @@ export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
                 }
 
                 const bounds = mapRef.current.getBounds();
-                const visibleMarkers = markers
-                    .filter(marker =>
-                        (selectedType === 'all' || marker.type === selectedType) &&
-                        bounds.contains(L.latLng(marker.position[0], marker.position[1]))
-                    )
-                    .slice(0, 1000); // 한 번에 표시할 최대 마커 수 제한
+                markerLayerRef.current.clearLayers();
+
+                // 화면에 보이는 마커만 필터링
+                const visibleMarkers = markers.filter(marker =>
+                    (selectedType === 'all' || marker.type === selectedType) &&
+                    bounds.contains(L.latLng(marker.position[0], marker.position[1]))
+                );
 
                 markerLayerRef.current.clearLayers();
 
@@ -123,6 +148,17 @@ export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
             // 이벤트 리스너 등록
             mapRef.current.on('moveend zoomend', updateVisibleMarkers);
         }
+    }, []);
+
+    // 마커 아이콘 프리로딩
+    useEffect(() => {
+        const preloadImages = () => {
+            Object.values(markerIcons).forEach(icon => {
+                const img = new Image();
+                img.src = icon.options.iconUrl;
+            });
+        };
+        preloadImages();
     }, []);
 
     // 마커 데이터나 선택된 타입이 변경될 때 업데이트

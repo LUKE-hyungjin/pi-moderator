@@ -1,0 +1,12 @@
+/* 마커 아이콘 프리로딩을 위한 스타일 */
+.leaflet-marker-icon-preload {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+}
+
+/* 타일 레이어 최적화를 위한 스타일 */
+.leaflet-tile {
+    will-change: transform;
+    contain: paint;
+}
