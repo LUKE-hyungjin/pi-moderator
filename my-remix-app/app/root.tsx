@@ -376,7 +376,7 @@ const Navbar = () => {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full bg-[#242424]">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -384,9 +384,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <script src="https://sdk.minepi.com/pi-sdk.js"></script>
       </head>
-      <body className="flex flex-col min-h-screen"> {/* flex와 min-h-screen 추가 */}
+      <body className="flex flex-col min-h-full bg-[#242424]">
         <Navbar />
-        <main className="flex-grow">
+        <main className="flex-grow bg-[#242424]">
           {children}
         </main>
         <footer className="bg-[#242424] text-white py-6">
