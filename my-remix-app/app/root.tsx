@@ -6,6 +6,8 @@ import {
   ScrollRestoration,
   useLocation,
   Link,
+  isRouteErrorResponse,
+  useRouteError,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 import { useState, useEffect } from "react";
@@ -13,6 +15,10 @@ import { supabase } from "~/lib/supabase.client";
 import { SpeedInsights } from "@vercel/speed-insights/remix";
 
 import "./tailwind.css";
+
+import { Navbar } from "~/components/Navbar";
+import { Footer } from "~/components/Footer";
+import { useUserStats } from "~/hooks/useUserStats";
 
 type Scope = 'username' | 'payments';
 interface AuthResult {
@@ -126,286 +132,8 @@ export const links: LinksFunction = () => [
   },
 ];
 
-const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [auth, setAuth] = useState<AuthResult | null>(null);
-  const location = useLocation();
-  const currentPath = location.pathname;
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-
-
-  useEffect(() => {
-    if (window.Pi) {
-      window.Pi.init({ version: "2.0", sandbox: true });
-    }
-  }, []);
-
-  const onIncompletePaymentFound = async (payment: PaymentDTO) => {
-    console.log("Incomplete payment found:", payment);
-    try {
-      // 서버에 미완료 결제 처리 요청
-      await fetch('/api/pi', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'verify_payment',
-          paymentId: payment.identifier,
-          txid: payment.transaction?.txid
-        })
-      });
-    } catch (error) {
-      console.error('Error handling incomplete payment:', error);
-    }
-  };
-  const authenticateUser = async () => {
-    try {
-      console.log('Current environment:', import.meta.env.DEV ? 'Development' : 'Production');
-      console.log('Current URL:', window.location.href);
-
-      const scopes: Array<Scope> = ['username', 'payments'];
-      console.log('Attempting authentication with scopes:', scopes);
-
-      const authResult = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
-      console.log('Authentication result:', authResult);
-
-      // 서버에서 사용자 검증
-      const verifyResponse = await fetch('/api/pi', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'verify_user',
-          accessToken: authResult.accessToken
-        })
-      });
-
-      console.log('Verify response status:', verifyResponse.status);
-      const responseData = await verifyResponse.json();
-      console.log('Verify response data:', responseData);
-
-      if (verifyResponse.ok) {
-        // Supabase에서 사용자 데이터 조회
-        const { data: userData, error: fetchError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', authResult.user.uid)
-          .single();
-
-        if (fetchError && fetchError.code !== 'PGRST116') {
-          console.error('사용자 데이터 조회 실패:', fetchError);
-          throw new Error('사용자 데이터 조회에 실패했습니다.');
-        }
-
-        const now = new Date();
-        const lastLoginDate = userData?.last_login_date ? new Date(userData.last_login_date) : null;
-        const timeSinceLastLogin = lastLoginDate ? now.getTime() - lastLoginDate.getTime() : null;
-        const canReceiveReward = !lastLoginDate || (timeSinceLastLogin !== null && timeSinceLastLogin >= 24 * 60 * 60 * 1000);
-
-        if (canReceiveReward) {
-          // 24시간이 지났거나 첫 로그인인 경우에만 데이터 업데이트
-          const { error: updateError } = await supabase
-            .from('users')
-            .upsert({
-              id: authResult.user.uid,
-              username: authResult.user.username,
-              created_at: userData?.created_at || new Date().toISOString(),
-              last_login_date: now.toISOString(),
-              points: (userData?.points || 0) + 1
-            });
-
-          if (updateError) {
-            console.error('Supabase error:', updateError);
-            alert('사용자 정보 저장에 실패했습니다. 다시 시도해주세요.');
-            return;
-          }
-
-          setAlertMessage(`환영합니다!\n ${authResult.user.username}님의 인증이 완료되었습니다.\n일일 로그인 보상 1 TOKEN 지급되었습니다!`);
-        } else {
-          // 24시간이 지나지 않은 경우 메시지만 표시
-          setAlertMessage(`환영합니다!\n ${authResult.user.username}님의 인증이 완료되었습니다.`);
-        }
-
-        setAuth(authResult);
-        localStorage.setItem('pi_auth', JSON.stringify(authResult));
-        setIsAlertOpen(true);
-      } else {
-        console.error('Verification failed:', responseData);
-        alert(`인증 실패: ${responseData.error || '사용자 검증에 실패했습니다.'}`);
-      }
-    } catch (error) {
-      console.error("Authentication error:", error);
-      if (error instanceof Error) {
-        if (error.message.includes('User cancelled')) {
-          alert('사용자가 인증을 취소했습니다.');
-        } else if (error.message.includes('Network error')) {
-          alert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
-        } else {
-          alert(`인증 오류: ${error.message}`);
-        }
-      } else {
-        alert('알 수 없는 오류가 발생했습니다. 다시 시도해주세요.');
-      }
-    }
-  };
-
-  useEffect(() => {
-    const savedAuth = localStorage.getItem('pi_auth');
-    if (savedAuth) {
-      setAuth(JSON.parse(savedAuth));
-    }
-  }, []);
-
-  const isActivePath = (path: string) => {
-    if (path === '/') {
-      return currentPath === '/' ? "text-purple-400" : "text-white hover:text-purple-400";
-    }
-    return currentPath.startsWith(path) ? "text-purple-400" : "text-white hover:text-purple-400";
-  };
-
-  return (
-    <>
-      <nav className="bg-[#1a1a1a] text-white p-4">
-        <div className="container mx-auto">
-          <div className="flex justify-between items-center">
-            {/* 로고 영역 */}
-            <div className="flex items-center space-x-4">
-              <img src="/picoin_logo.png" alt="Logo" className="w-12 h-12 rounded-full" />
-              <Link to="/" className="text-xl font-bold hover:text-purple-400">
-                Pi-Moderator
-              </Link>
-            </div>
-
-            {/* 데스크톱 메뉴 */}
-            <div className="hidden md:flex items-center space-x-12">
-              <Link to="/" className={`text-lg font-medium ${isActivePath('/')}`}>Home</Link>
-              <Link to="/pi" className={`text-lg font-medium ${isActivePath('/pi')}`}>Pi</Link>
-              <Link to="/map" className={`text-lg font-medium ${isActivePath('/map')}`}>Map</Link>
-              <Link to="/user" className={`text-lg font-medium ${isActivePath('/user')}`}>User</Link>
-            </div>
-
-            {/* 데스크톱 인증 영역 */}
-            <div className="hidden md:flex items-center space-x-4">
-              <span id="userStatus" className="text-white">
-                {auth ? `사용자: ${auth.user.username}` : '로그인이 필요합니다'}
-              </span>
-              {auth ? (
-                <div className="flex space-x-2">
-                  <button
-                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-                    onClick={authenticateUser}
-                  >
-                    재인증
-                  </button>
-                </div>
-              ) : (
-                <button
-                  id="piAuthButton"
-                  className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-                  onClick={authenticateUser}
-                >
-                  Pi Network 인증
-                </button>
-              )}
-            </div>
-
-            {/* 모바일 메뉴 버튼 */}
-            <button
-              className="md:hidden text-white"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-
-          {/* 모바일 메뉴 */}
-          <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} pt-4`}>
-            <div className="flex flex-col space-y-4">
-              <Link to="/" className={`py-2 ${isActivePath('/')}`} onClick={() => setIsMenuOpen(false)}>
-                Home
-              </Link>
-              <Link to="/pi" className={`py-2 ${isActivePath('/pi')}`} onClick={() => setIsMenuOpen(false)}>
-                Pi
-              </Link>
-              <Link to="/map" className={`py-2 ${isActivePath('/map')}`} onClick={() => setIsMenuOpen(false)}>
-                Map
-              </Link>
-              <Link to="/user" className={`py-2 ${isActivePath('/user')}`} onClick={() => setIsMenuOpen(false)}>
-                User
-              </Link>
-
-              {/* 모바일 인증 영역 */}
-              <div className="pt-4 border-t border-gray-600">
-                <span id="mobileUserStatus" className="block text-white mb-4">
-                  {auth ? `사용자: ${auth.user.username}` : '로그인이 필요합니다'}
-                </span>
-                {auth ? (
-                  <div className="flex space-x-2">
-                    <button
-                      className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-                      onClick={authenticateUser}
-                    >
-                      재인증
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    id="mobilePiAuthButton"
-                    className="w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-                    onClick={authenticateUser}
-                  >
-                    Pi Network 인증
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-      {/* 알림 모달 */}
-      <AlertModal
-        isOpen={isAlertOpen}
-        onClose={() => setIsAlertOpen(false)}
-        message={alertMessage}
-      />
-    </>
-  );
-};
-
 export function Layout({ children }: { children: React.ReactNode }) {
-  const [totalUsers, setTotalUsers] = useState<number>(0);
-  const [todayUsers, setTodayUsers] = useState<number>(0);
-
-  useEffect(() => {
-    const fetchUserStats = async () => {
-      try {
-        // 총 사용자 수 조회
-        const { count: total } = await supabase
-          .from('users')
-          .select('*', { count: 'exact', head: true });
-
-        // 오늘 접속자 수 조회
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const { count: today_users } = await supabase
-          .from('users')
-          .select('*', { count: 'exact', head: true })
-          .gte('last_login_date', today.toISOString());
-
-        setTotalUsers(total || 0);
-        setTodayUsers(today_users || 0);
-      } catch (error) {
-        console.error('Failed to fetch user stats:', error);
-      }
-    };
-
-    fetchUserStats();
-  }, []);
+  const { totalUsers, todayUsers } = useUserStats();
 
   return (
     <html lang="en" className="h-full bg-[#242424]">
@@ -418,33 +146,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="flex flex-col min-h-full bg-[#242424]">
         <Navbar />
-        <main className="flex-grow bg-[#242424]">
-          {children}
-        </main>
-        <footer className="bg-[#1a1a1a] text-white py-6">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-              <div className="flex items-center space-x-6">
-                <a
-                  href="mailto:pi.moderator.official@gmail.com"
-                  className="flex items-center space-x-2 hover:text-purple-400"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span>E-mail</span>
-                </a>
-              </div>
-              <div className="flex flex-col items-center mt-4">
-                <span>총 이용자: {totalUsers.toLocaleString()}명</span>
-                <span>오늘 접속자: {todayUsers.toLocaleString()}명</span>
-              </div>
-              <div className="flex flex-col items-center text-sm text-gray-400">
-                <div>© 2024 Pi-Moderator. All rights reserved.</div>
-              </div>
-            </div>
-          </div>
-        </footer>
+        <main className="flex-grow bg-[#242424]">{children}</main>
+        <Footer totalUsers={totalUsers} todayUsers={todayUsers} />
         <SpeedInsights />
         <ScrollRestoration />
         <Scripts />
@@ -455,4 +158,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return <Outlet />;
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div className="error-container">
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="error-container">
+      <h1>앗! 예상치 못한 오류가 발생했습니다.</h1>
+      <p>잠시 후 다시 시도해주세요.</p>
+    </div>
+  );
 }

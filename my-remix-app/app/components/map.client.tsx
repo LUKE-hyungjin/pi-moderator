@@ -75,7 +75,7 @@ export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
                 scrollWheelZoom: true,
                 doubleClickZoom: true,
                 worldCopyJump: false,
-                maxBounds: [[-90, -180], [90, 180]],
+                maxBounds: [[-60, -180], [85, 180]],
                 maxBoundsViscosity: 1.0,
                 preferCanvas: true  // Canvas 렌더링 사용
             });
