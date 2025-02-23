@@ -88,7 +88,7 @@ export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
                 zoom: 3,
                 maxZoom: 18,
                 minZoom: 2,
-                center: [30, 0],
+                center: defaultPosition,
                 zoomControl: true,
                 attributionControl: false,
                 dragging: true,

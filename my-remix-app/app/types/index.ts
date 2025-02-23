@@ -51,7 +51,14 @@ export interface AlertModalProps {
     message: string;
 }
 
+declare global {
+    interface Window {
+        Pi: any;
+    }
+}
+
+
 export interface FooterProps {
     totalUsers: number;
     todayUsers: number;
-} 
+}
