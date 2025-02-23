@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from '@remix-run/react';
 import { supabase } from '~/lib/supabase.client';
+import { useLanguage } from "~/contexts/LanguageContext";
+import { useTranslation } from "~/hooks/useTranslation";
+import { translateToString } from "~/i18n/translations";
 
 interface Marker {
     id: string;
@@ -25,6 +28,8 @@ interface AuthResult {
 }
 
 export default function User() {
+    const { language } = useLanguage();
+    const { t } = useTranslation(language);
     const [auth, setAuth] = useState<AuthResult | null>(null);
     const [markers, setMarkers] = useState<Marker[]>([]);
     const [userData, setUserData] = useState<UserData | null>(null);
@@ -63,24 +68,25 @@ export default function User() {
             if (error) throw error;
             setUserData(data);
         } catch (error) {
-            console.error('사용자 데이터 불러오기 실패:', error);
+            console.error(translateToString(t('user.error.fetch_data')), error);
         }
     };
 
     const getNextRewardTime = () => {
-        if (!userData?.last_login_date) return '지금';
+        if (!userData?.last_login_date) return translateToString(t('user.reward.now'));
 
         const lastLogin = new Date(userData.last_login_date);
         const nextReward = new Date(lastLogin.getTime() + 24 * 60 * 60 * 1000);
         const now = new Date();
         const timeLeft = nextReward.getTime() - now.getTime();
 
-        if (timeLeft <= 0) return '지금';
+        if (timeLeft <= 0) return translateToString(t('user.reward.now'));
 
         const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
         const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 
-        return `${hoursLeft}시간 ${minutesLeft}분 후`;
+        return `${hoursLeft} ${translateToString(t('user.reward.hour'))} ${minutesLeft}${translateToString(t('user.reward.minute'))}`;
+
     };
 
     if (!auth) {
@@ -102,9 +108,9 @@ export default function User() {
                             />
                         </svg>
                     </div>
-                    <h2 className="text-3xl font-bold mb-4 text-white">사용자 인증 필요</h2>
-                    <p className="text-gray-400">서비스를 이용하기 위해서는 로그인이 필요합니다.</p>
-                    <p className="text-gray-400 mb-6">Pi Browser에 접속해서 로그인 해주세요.</p>
+                    <h2 className="text-3xl font-bold mb-4 text-white">{translateToString(t('user.auth.required'))}</h2>
+                    <p className="text-gray-400">{translateToString(t('user.auth.description'))}</p>
+                    <p className="text-gray-400 mb-6">{translateToString(t('user.auth.pi_browser'))}</p>
                 </div>
             </div>
         );
@@ -115,7 +121,7 @@ export default function User() {
             <div className="max-w-6xl mx-auto">
                 {/* 사용자 정보 섹션 */}
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl font-bold mb-8 text-white">사용자 정보</h2>
+                    <h2 className="text-4xl font-bold mb-8 text-white">{translateToString(t('user.info.title'))}</h2>
                     <div className="bg-gray-800 rounded-xl p-8 shadow-lg max-w-2xl mx-auto">
                         <div className="mb-8">
                             <div className="inline-block bg-purple-500 rounded-full p-4 mb-4">
@@ -134,26 +140,26 @@ export default function User() {
                                 </svg>
                             </div>
                             <div className="mb-4">
-                                <label className="text-gray-400 block mb-2">사용자 이름</label>
+                                <label className="text-gray-400 block mb-2">{translateToString(t('user.info.username'))}</label>
                                 <p className="text-2xl font-semibold text-white">{auth.user.username}</p>
                             </div>
                             <button
                                 onClick={() => navigate('/user/map')}
                                 className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors duration-200"
                             >
-                                장소 추가하기
+                                {translateToString(t('user.action.add_place'))}
                             </button>
                         </div>
                         {/* 포인트 정보 */}
                         <div className="mt-6 p-4 bg-gray-700 rounded-lg">
                             <div className="mb-4">
-                                <label className="text-gray-400 block mb-2">보유 토큰</label>
+                                <label className="text-gray-400 block mb-2">{translateToString(t('user.info.tokens'))}</label>
                                 <p className="text-2xl font-semibold text-white">
                                     {userData?.points || 0}
                                 </p>
                             </div>
                             <div className="text-sm text-gray-400">
-                                다음 로그인 보상 가능 시간: {getNextRewardTime()}
+                                {translateToString(t('user.reward.next_time'))}: {getNextRewardTime()}
                             </div>
                         </div>
                     </div>
@@ -161,17 +167,17 @@ export default function User() {
             </div>
             {/* 내가 등록한 장소 목록 */}
             <div className="mt-12">
-                <h3 className="text-3xl font-bold mb-6 text-center text-white">내가 등록한 장소</h3>
+                <h3 className="text-3xl font-bold mb-6 text-center text-white">{translateToString(t('user.places.title'))}</h3>
                 <div className="overflow-x-auto">
                     <table className="min-w-full bg-gray-800 rounded-lg overflow-hidden">
                         <thead className="bg-gray-700">
                             <tr>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">장소명</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider hidden md:table-cell">주소</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">유형</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">수수료</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider hidden md:table-cell">등록일</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">작업</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">{translateToString(t('user.places.name'))}</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider hidden md:table-cell">{translateToString(t('user.places.address'))}</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">{translateToString(t('user.places.type'))}</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">{translateToString(t('user.places.fee'))}</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider hidden md:table-cell">{translateToString(t('user.places.date'))}</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">{translateToString(t('user.places.actions'))}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-700">
@@ -184,7 +190,7 @@ export default function User() {
                                         <div className="line-clamp-2">{marker.address}</div>
                                     </td>
                                     <td className="px-4 py-4 text-sm text-gray-300">
-                                        <div className="line-clamp-1">{marker.type}</div>
+                                        <div className="line-clamp-1">{translateToString(t(`marker.type.${marker.type}`))}</div>
                                     </td>
                                     <td className="px-4 py-4 text-sm text-gray-300 whitespace-nowrap">
                                         {marker.fee_percentage}%
@@ -197,7 +203,7 @@ export default function User() {
                                             onClick={() => navigate(`/user/map/edit/${marker.id}`)}
                                             className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm"
                                         >
-                                            수정
+                                            {translateToString(t('user.action.edit'))}
                                         </button>
                                     </td>
                                 </tr>

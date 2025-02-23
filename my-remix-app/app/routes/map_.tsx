@@ -7,6 +7,9 @@ import { useSearchParams } from "@remix-run/react";
 import type { MarkerData, MarkerType } from "~/components/map.client";
 import { supabase } from "~/lib/supabase.server";
 import { useState } from "react";
+import { useLanguage } from "~/contexts/LanguageContext";
+import { useTranslation } from "~/hooks/useTranslation";
+import { translateToString } from "~/i18n/translations";
 
 export const loader: LoaderFunction = async () => {
     const { data: markers, error } = await supabase
@@ -43,21 +46,22 @@ export const loader: LoaderFunction = async () => {
 };
 
 export default function MapRoute() {
+    const { language } = useLanguage();
+    const { t } = useTranslation(language);
     const [searchParams] = useSearchParams();
-    // URL 파라미터에서 type을 가져오고 타입 체크
     const typeParam = searchParams.get('type');
     const validTypes = ['all', 'education', 'relay', 'tax'];
     const initialType = validTypes.includes(typeParam || '') ? typeParam as MarkerType : 'all';
 
     const { markers } = useLoaderData<{ markers: MarkerData[] }>();
     const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
-    // initialType을 selectedType의 초기값으로 설정
     const [selectedType, setSelectedType] = useState<'all' | MarkerType>(initialType);
+
     return (
         <div className="container mx-auto px-4 py-6 sm:px-6 sm:py-8">
             <div className="max-w-6xl mx-auto">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl sm:text-3xl font-bold">지도</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold">{translateToString(t('map.title'))}</h2>
                     <div className="flex space-x-2">
                         <button
                             onClick={() => setSelectedType('all')}
@@ -66,7 +70,7 @@ export default function MapRoute() {
                                     ? 'bg-purple-500 text-white'
                                     : 'bg-gray-700 text-white hover:bg-gray-600'}`}
                         >
-                            전체
+                            {translateToString(t('map.filter.all'))}
                         </button>
                         <button
                             onClick={() => setSelectedType('education')}
@@ -75,7 +79,7 @@ export default function MapRoute() {
                                     ? 'bg-blue-500 text-white'
                                     : 'bg-gray-700 text-white hover:bg-gray-600'}`}
                         >
-                            교육
+                            {translateToString(t('map.filter.education'))}
                         </button>
                         <button
                             onClick={() => setSelectedType('relay')}
@@ -84,7 +88,7 @@ export default function MapRoute() {
                                     ? 'bg-red-500 text-white'
                                     : 'bg-gray-700 text-white hover:bg-gray-600'}`}
                         >
-                            중계
+                            {translateToString(t('map.filter.relay'))}
                         </button>
                         <button
                             onClick={() => setSelectedType('tax')}
@@ -93,7 +97,7 @@ export default function MapRoute() {
                                     ? 'bg-green-500 text-white'
                                     : 'bg-gray-700 text-white hover:bg-gray-600'}`}
                         >
-                            세무
+                            {translateToString(t('map.filter.tax'))}
                         </button>
                     </div>
                 </div>
@@ -103,7 +107,7 @@ export default function MapRoute() {
                         <div className="h-[400px] sm:h-[500px] lg:h-[600px]">
                             <ClientOnly fallback={
                                 <div className="h-[600px] flex items-center justify-center bg-gray-100">
-                                    <div className="text-lg text-gray-600">지도를 불러오는 중...</div>
+                                    <div className="text-lg text-gray-600">{translateToString(t('map.loading'))}</div>
                                 </div>
                             }>
                                 {() => <Map markers={markers} onMarkerClick={setSelectedMarker} selectedType={selectedType} />}
@@ -116,7 +120,7 @@ export default function MapRoute() {
                             <MarkerDetail marker={selectedMarker} />
                         ) : (
                             <div className="text-center text-gray-500">
-                                마커를 선택하면 정보가 표시됩니다.
+                                {translateToString(t('map.no_marker_selected'))}
                             </div>
                         )}
                     </div>
@@ -127,19 +131,15 @@ export default function MapRoute() {
 }
 
 function MarkerDetail({ marker }: { marker: MarkerData }) {
-    // 마커 타입별 색상 정의
+    const { language } = useLanguage();
+    const { t } = useTranslation(language);
+
     const typeColors = {
         education: 'bg-blue-500',
         relay: 'bg-red-500',
         tax: 'bg-green-500'
     };
 
-    // 마커 타입별 텍스트
-    const typeLabels = {
-        education: '교육',
-        relay: '중계',
-        tax: '세무'
-    };
     return (
         <div>
             <h3 className="text-xl sm:text-2xl font-bold mb-4">{marker.name}</h3>
@@ -153,23 +153,23 @@ function MarkerDetail({ marker }: { marker: MarkerData }) {
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-500">
-                            대표 이미지 없음
+                            {translateToString(t('map.marker.no_image'))}
                         </div>
                     )}
                 </div>
 
                 <div className="space-y-2">
                     <p className="text-sm sm:text-base">
-                        <span className="font-medium">카테고리:</span>{' '}
+                        <span className="font-medium">{translateToString(t('map.marker.category'))}:</span>{' '}
                         <span className={`px-2 py-1 rounded text-white ${typeColors[marker.type]}`}>
-                            {typeLabels[marker.type]}
+                            {translateToString(t(`map.filter.${marker.type}`))}
                         </span>
                     </p>
                     <p className="text-sm sm:text-base">
-                        <span className="font-medium">주소:</span> {marker.address}
+                        <span className="font-medium">{translateToString(t('map.marker.address'))}:</span> {marker.address}
                     </p>
                     <p className="text-sm sm:text-base">
-                        <span className="font-medium">1파이당 수수료:</span> {marker.feePercentage}%
+                        <span className="font-medium">{translateToString(t('map.marker.fee'))}:</span> {marker.feePercentage}{translateToString(t('map.marker.fee_unit'))}
                     </p>
                 </div>
 
@@ -177,7 +177,7 @@ function MarkerDetail({ marker }: { marker: MarkerData }) {
                     to={`/map/${marker.id}`}
                     className="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mt-4"
                 >
-                    자세히 보기
+                    {translateToString(t('map.marker.view_details'))}
                 </Link>
             </div>
         </div>

@@ -260,9 +260,25 @@ export const ko = {
     ],
     'pi.wallet.future': '➡️ [미래 파이프라인 출시 예정]',
 
+    // 블록탐색기 섹션
+    'pi.explorer.title': '6) 블록탐색기',
+    'pi.explorer.subtitle': '6️⃣ 블록탐색기',
+    'pi.explorer.description': [
+        'Pi Network BlockExplorer를 사용하면 개척자는 거래 내역 보기 등 Pi 메인넷 및 테스트넷 블록체인을 탐색할 수 있습니다.',
+        'BlockExplorer를 사용하면 과거 결제를 찾아 조사하고 Pi 블록체인에서 발생한 거래 상태를 볼 수 있습니다. 이를 통해 Pioneers는 보낸 사람의 주소, 받는 사람의 주소, 금액, 수수료 등과 같은 거래 정보를 확인할 수 있습니다.',
+        'BlockExplorer는 일반 웹 도구를 사용하는 모든 사람이 블록체인에 대한 가시성을 허용하고 블록체인 기술의 투명성과 분산화를 보여주는 중요한 도구입니다.'
+    ],
+    'pi.explorer.history.title': '역사',
+    'pi.explorer.history.items': [
+        '2021년 10월 13일: BlockExplorer를 통해 탐색할 수 있는 테스트넷 블록체인으로 출시',
+        '2022년: Enclosed Mainnet 출시 이후 BlockExplorer에 메인넷 블록체인 추가',
+        '최초 출시 직후 통찰력 있는 네트워크 수준 데이터를 요약하는 네트워크 통계 항목 출시'
+    ],
+    'pi.explorer.future': '➡️ [미래 파이프라인 출시 예정]',
+
+
     // 유틸리티 보너스 섹션
     'pi.util.title': '3. 유틸 보너스 받는 방법',
-    'pi.util.subtitle': '유틸리티 보너스 받는 방법',
     'pi.util.required.title': '필수 활동 목록',
     'pi.util.required.items': [
         {
@@ -401,4 +417,47 @@ export const ko = {
 
     'pi.fireside.duration.title': '🔥 은 얼마나 오래 지속됩니까?',
     'pi.fireside.duration.content': '인기 게시물에 대한 불은 개인이 계속해서 게시물에 불을 기여하는 한 무기한 지속될 수 있습니다. 그러나 게시물에 불이 추가될 때마다 해당 불의 특정 양이 24시간 후에 만료됩니다.',
+
+    //// Map Page
+    'map.title': '지도',
+    'map.loading': '지도를 불러오는 중...',
+    'map.no_marker_selected': '마커를 선택하면 정보가 표시됩니다.',
+
+    // Map Filter Buttons
+    'map.filter.all': '전체',
+    'map.filter.education': '교육',
+    'map.filter.relay': '중계',
+    'map.filter.tax': '세무',
+
+    // Marker Detail
+    'map.marker.category': '카테고리',
+    'map.marker.address': '주소',
+    'map.marker.fee': '1파이당 수수료',
+    'map.marker.fee_unit': '%',
+    'map.marker.no_image': '대표 이미지 없음',
+    'map.marker.view_details': '자세히 보기',
+
+    //// User Page
+    'user.error.fetch_data': '사용자 데이터 불러오기 실패:',
+    'user.reward.now': '지금',
+    'user.reward.hour': '시간',
+    'user.reward.minute': '분',
+    'user.reward.time_left': '{hours}시간 {minutes}분 후',
+    'user.auth.required': '사용자 인증 필요',
+    'user.auth.description': '서비스를 이용하기 위해서는 로그인이 필요합니다.',
+    'user.auth.pi_browser': 'Pi Browser에 접속해서 로그인 해주세요.',
+    'user.info.title': '사용자 정보',
+    'user.info.username': '사용자 이름',
+    'user.info.tokens': '보유 토큰',
+    'user.action.add_place': '장소 추가하기',
+    'user.reward.next_time': '다음 로그인 보상 가능 시간',
+    'user.places.title': '내가 등록한 장소',
+    'user.places.name': '장소명',
+    'user.places.address': '주소',
+    'user.places.type': '유형',
+    'user.places.fee': '수수료',
+    'user.places.date': '등록일',
+    'user.places.actions': '작업',
+    'user.action.edit': '수정'
+
 };  

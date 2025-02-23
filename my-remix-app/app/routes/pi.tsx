@@ -179,9 +179,367 @@ export default function PiRoute() {
                         </div>
                     )
                 },
+                {
+                    id: "kyc",
+                    title: t("pi.kyc.title"),
+                    content: (
+                        <div className="space-y-6">
+                            <div className="bg-gray-800 p-6 rounded-lg">
+                                <h3 className="text-xl font-bold mb-4 text-white">{translateToString(t('pi.kyc.subtitle'))}</h3>
 
+                                <div className="space-y-4 text-gray-300">
+                                    {(t('pi.kyc.description') as string[]).map((paragraph, index) => (
+                                        <p key={index}>{paragraph}</p>
+                                    ))}
+
+                                    <p className="text-blue-400 hover:text-blue-300">
+                                        <a href="https://minepi.com/blog/pi-network-kyc/" target="_blank" rel="noopener noreferrer">
+                                            {translateToString(t('pi.kyc.learn_more'))}
+                                        </a>
+                                    </p>
+                                </div>
+
+                                <div className="mt-8">
+                                    <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.kyc.history.title'))}</h4>
+                                    <ul className="space-y-3 text-gray-300">
+                                        {(t('pi.kyc.history.items') as string[]).map((item, index) => (
+                                            <li key={index}>• {item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="mt-8">
+                                    <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.kyc.features.title'))}</h4>
+                                    <ul className="space-y-3 text-gray-300">
+                                        {(t('pi.kyc.features.items') as string[]).map((item, index) => (
+                                            <li key={index}>• {item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="mt-8">
+                                    <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.kyc.ongoing.title'))}</h4>
+                                    <ul className="space-y-3 text-gray-300">
+                                        {(t('pi.kyc.ongoing.items') as string[]).map((item, index) => (
+                                            <li key={index}>• {item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="mt-4 text-blue-400">
+                                    <p>{translateToString(t('pi.kyc.future'))}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                },
+                {
+                    id: "token-model",
+                    title: t("pi.token.title"),
+                    content: (
+                        <div className="space-y-6">
+                            <div className="bg-gray-800 p-6 rounded-lg">
+                                <h3 className="text-xl font-bold mb-4 text-white">{translateToString(t('pi.token.subtitle'))}</h3>
+
+                                <div className="space-y-4 text-gray-300">
+                                    {(t('pi.token.description') as string[]).map((paragraph, index) => (
+                                        <p key={index}>{paragraph}</p>
+                                    ))}
+                                </div>
+
+                                <div className="mt-8">
+                                    <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.token.history.title'))}</h4>
+                                    <ul className="space-y-3 text-gray-300">
+                                        {(t('pi.token.history.items') as string[]).map((item, index) => (
+                                            <li key={index}>• {item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="mt-8">
+                                    <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.token.ongoing.title'))}</h4>
+                                    <ul className="space-y-3 text-gray-300">
+                                        {(t('pi.token.ongoing.items') as string[]).map((item, index) => (
+                                            <li key={index}>• {item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="mt-4 text-blue-400">
+                                    <p>{translateToString(t('pi.token.future'))}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                },
+                {
+                    id: "pi-wallet",
+                    title: t("pi.wallet.title"),
+                    content: (
+                        <div className="space-y-6">
+                            <div className="bg-gray-800 p-6 rounded-lg">
+                                <h3 className="text-xl font-bold mb-4 text-white">{translateToString(t('pi.wallet.subtitle'))}</h3>
+
+                                <div className="space-y-4 text-gray-300">
+                                    {(t('pi.wallet.description') as string[]).map((paragraph, index) => (
+                                        <p key={index}>{paragraph}</p>
+                                    ))}
+
+                                    <p className="text-blue-400 hover:text-blue-300">
+                                        <a href="https://minepi.com/faqs/how-do-we-create-and-use-the-pi-wallet-and-can-we-use-an-external-wallet-to-hold-our-pi-in-the-future/"
+                                            target="_blank"
+                                            rel="noopener noreferrer">
+                                            {translateToString(t('pi.wallet.learn_more'))}
+                                        </a>
+                                    </p>
+                                </div>
+
+                                <div className="mt-8">
+                                    <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.wallet.history.title'))}</h4>
+                                    <ul className="space-y-3 text-gray-300">
+                                        {(t('pi.wallet.history.items') as string[]).map((item, index) => (
+                                            <li key={index}>• {item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="mt-8">
+                                    <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.wallet.ongoing.title'))}</h4>
+                                    <ul className="space-y-3 text-gray-300">
+                                        {(t('pi.wallet.ongoing.items') as string[]).map((item, index) => (
+                                            <li key={index}>• {item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="mt-4 text-blue-400">
+                                    <p>{translateToString(t('pi.wallet.future'))}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                },
+                {
+                    id: "block-explorer",
+                    title: t("pi.explorer.title"),
+                    content: (
+                        <div className="space-y-6">
+                            <div className="bg-gray-800 p-6 rounded-lg">
+                                <h3 className="text-xl font-bold mb-4 text-white">{translateToString(t('pi.explorer.subtitle'))}</h3>
+
+                                <div className="space-y-4 text-gray-300">
+                                    {(t('pi.explorer.description') as string[]).map((paragraph, index) => (
+                                        <p key={index}>{paragraph}</p>
+                                    ))}
+                                </div>
+
+                                <div className="mt-8">
+                                    <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.explorer.history.title'))}</h4>
+                                    <ul className="space-y-3 text-gray-300">
+                                        {(t('pi.explorer.history.items') as string[]).map((item, index) => (
+                                            <li key={index}>• {item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="mt-4 text-blue-400">
+                                    <p>{translateToString(t('pi.explorer.future'))}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
             ]
         },
+        {
+            id: "util-bonus",
+            title: t("pi.util.title"),
+            content: (
+                <div className="space-y-6">
+                    <div className="bg-gray-800 p-6 rounded-lg">
+                        <div className="space-y-6">
+                            <div>
+                                <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.util.required.title'))}</h4>
+                                <ul className="space-y-3 text-gray-300">
+                                    {Array.isArray(t('pi.util.required.items'))
+                                        ? (t('pi.util.required.items') as Array<string | { text: string, warning: string }>).map((item, index) => (
+                                            <li key={index}>
+                                                • {typeof item === 'string'
+                                                    ? item
+                                                    : (
+                                                        <>
+                                                            {item.text}<br />
+                                                            <span className="text-yellow-500 ml-4">⚠️ {item.warning}</span>
+                                                        </>
+                                                    )
+                                                }
+                                            </li>
+                                        ))
+                                        : null
+                                    }
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.util.caution.title'))}</h4>
+                                <ul className="space-y-3 text-gray-300">
+                                    {Array.isArray(t('pi.util.caution.items'))
+                                        ? (t('pi.util.caution.items') as (string | TranslationValue)[]).map((item: string | TranslationValue, index: number) => (
+                                            <li key={index}>• {translateToString(item)}</li>
+                                        ))
+                                        : <li>• {translateToString(t('pi.util.caution.items'))}</li>
+                                    }
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.util.additional.title'))}</h4>
+                                <ul className="space-y-3 text-gray-300">
+                                    {Array.isArray(t('pi.util.additional.items'))
+                                        ? (t('pi.util.additional.items') as (string | TranslationValue)[]).map((item: string | TranslationValue, index: number) => (
+                                            <li key={index}>• {translateToString(item)}</li>
+                                        ))
+                                        : <li>• {translateToString(t('pi.util.additional.items'))}</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: "node-detail-info",
+            title: t("pi.node_detail.title"),
+            content: (
+                <div className="space-y-6">
+                    <div className="bg-gray-800 p-6 rounded-lg">
+                        <div className="space-y-6">
+                            {[
+                                { title: 'basic', icon: '•' },
+                                { title: 'operation', icon: '•' },
+                                { title: 'technical', icon: '•' },
+                                { title: 'hardware', icon: '•' },
+                                { title: 'caution', icon: '•' },
+                                { title: 'additional', icon: '•' }
+                            ].map(section => (
+                                <div key={section.title}>
+                                    <h4 className="text-lg font-bold mb-4 text-white">
+                                        {translateToString(t(`pi.node_detail.${section.title}.title`))}
+                                    </h4>
+                                    <ul className="space-y-3 text-gray-300">
+                                        {Array.isArray(t(`pi.node_detail.${section.title}.items`))
+                                            ? (t(`pi.node_detail.${section.title}.items`) as Array<string | { text: string, isWarning?: boolean, isDanger?: boolean, isNote?: boolean }>).map((item, index) => (
+                                                <li key={index}>
+                                                    {typeof item === 'object' ? (
+                                                        <>
+                                                            • {item.text}
+                                                            {item.isDanger && <span className="text-red-500 ml-2">🚫</span>}
+                                                            {item.isWarning && <span className="text-yellow-500 ml-2">⚠️</span>}
+                                                            {item.isNote && <span className="text-blue-400 ml-2">ℹ️</span>}
+                                                        </>
+                                                    ) : (
+                                                        <>• {item}</>
+                                                    )}
+                                                </li>
+                                            ))
+                                            : <li>• {translateToString(t(`pi.node_detail.${section.title}.items`))}</li>
+                                        }
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: "node-install",
+            title: t("pi.node_install.title"),
+            content: (
+                <div className="space-y-6">
+                    <div className="bg-gray-800 p-6 rounded-lg">
+                        <div className="space-y-6">
+                            <div>
+                                <h4 className="text-lg font-bold mb-4 text-white">
+                                    {translateToString(t('pi.node_install.requirements.title'))}
+                                </h4>
+                                <p className="text-gray-300">
+                                    • {translateToString(t('pi.node_install.requirements.content'))} ⚠️
+                                </p>
+                            </div>
+
+                            <div>
+                                <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.node_install.steps.title'))}</h4>
+                                <ul className="space-y-3 text-gray-300">
+                                    {Array.isArray(t('pi.node_install.steps.items'))
+                                        ? (t('pi.node_install.steps.items') as Array<string | { text: string, hasCheckmark?: boolean, hasLineBreak?: boolean }>).map((item, index) => (
+                                            <li key={index}>
+                                                • {typeof item === 'object' ? (
+                                                    <>
+                                                        {item.text.split('\n').map((line, i) => (
+                                                            <React.Fragment key={i}>
+                                                                {line}
+                                                                {item.hasCheckmark && line.includes('✔️') && <span className="text-green-500 ml-2">✔️</span>}
+                                                                {item.hasLineBreak && i < item.text.split('\n').length - 1 && <br />}
+                                                            </React.Fragment>
+                                                        ))}
+                                                    </>
+                                                ) : (
+                                                    item
+                                                )}
+                                            </li>
+                                        ))
+                                        : <li>• {translateToString(t('pi.node_install.steps.items'))}</li>
+                                    }
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4 className="text-lg font-bold mb-4 text-white">{translateToString(t('pi.node_install.additional.title'))}</h4>
+                                <ul className="space-y-3 text-gray-300">
+                                    {Array.isArray(t('pi.node_install.additional.items'))
+                                        ? (t('pi.node_install.additional.items') as (string | TranslationValue)[]).map((item: string | TranslationValue, index: number) => (
+                                            <li key={index}>• {translateToString(item)}</li>
+                                        ))
+                                        : <li>• {translateToString(t('pi.node_install.additional.items'))}</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: "fireside",
+            title: t("pi.fireside.title"),
+            content: (
+                <div className="space-y-6">
+                    <div className="bg-gray-800 p-6 rounded-lg">
+                        <div className="space-y-6">
+                            {[
+                                'purpose',
+                                'fire',
+                                'token',
+                                'duration'
+                            ].map(section => (
+                                <div key={section}>
+                                    <h4 className="text-lg font-bold mb-4 text-white">
+                                        {translateToString(t(`pi.fireside.${section}.title`))}
+                                    </h4>
+                                    <div className="text-gray-300">
+                                        <p>
+                                            • {translateToString(t(`pi.fireside.${section}.content`))}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )
+        }
     ], [language, t]);
 
     const findSelectedContent = () => {

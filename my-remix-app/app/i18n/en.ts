@@ -260,9 +260,25 @@ export const en = {
     ],
     'pi.wallet.future': '➡️ [Future Pipeline Coming Soon]',
 
+    // Block Explorer Section
+    'pi.explorer.title': '6) Block Explorer',
+    'pi.explorer.subtitle': '6️⃣ Block Explorer',
+    'pi.explorer.description': [
+        'The Pi Network BlockExplorer allows Pioneers to explore the Pi Mainnet and Testnet blockchains, including viewing transaction histories.',
+        'Using BlockExplorer, you can search and investigate past payments and view the status of transactions that occurred on the Pi blockchain. This allows Pioneers to verify transaction information such as sender address, recipient address, amount, and fees.',
+        'BlockExplorer is an essential tool that allows visibility into the blockchain for anyone using common web tools and demonstrates the transparency and decentralization of blockchain technology.'
+    ],
+    'pi.explorer.history.title': 'History',
+    'pi.explorer.history.items': [
+        'October 13, 2021: Launched with Testnet blockchain explorable through BlockExplorer',
+        '2022: Added Mainnet blockchain to BlockExplorer after Enclosed Mainnet launch',
+        'Released network statistics section summarizing insightful network-level data shortly after initial launch'
+    ],
+    'pi.explorer.future': '➡️ [Future Pipeline Coming Soon]',
+
+
     // Utility Bonus Section
     'pi.util.title': '3. How to Receive Utility Bonus',
-    'pi.util.subtitle': 'How to Receive Utility Bonus',
     'pi.util.required.title': 'Required Activities List',
     'pi.util.required.items': [
         {
@@ -401,4 +417,46 @@ export const en = {
 
     'pi.fireside.duration.title': 'How long does 🔥 last?',
     'pi.fireside.duration.content': 'Fire on popular posts can last indefinitely as long as individuals continue to contribute fire to the post. However, each time fire is added to a post, a certain amount of that fire expires after 24 hours.',
+
+    //// Map Page
+    'map.title': 'Map',
+    'map.loading': 'Loading map...',
+    'map.no_marker_selected': 'Select a marker to view information.',
+
+    // Map Filter Buttons
+    'map.filter.all': 'All',
+    'map.filter.education': 'Education',
+    'map.filter.relay': 'Relay',
+    'map.filter.tax': 'Tax',
+
+    // Marker Detail
+    'map.marker.category': 'Category',
+    'map.marker.address': 'Address',
+    'map.marker.fee': 'Fee per Pi',
+    'map.marker.fee_unit': '%',
+    'map.marker.no_image': 'No representative image',
+    'map.marker.view_details': 'View Details',
+
+    //// User Page
+    'user.error.fetch_data': 'Failed to fetch user data:',
+    'user.reward.now': 'Now',
+    'user.reward.hour': 'hour',
+    'user.reward.minute': 'minute',
+    'user.reward.time_left': 'In {hours}h {minutes}m',
+    'user.auth.required': 'Authentication Required',
+    'user.auth.description': 'Login is required to use the service.',
+    'user.auth.pi_browser': 'Please login through Pi Browser.',
+    'user.info.title': 'User Information',
+    'user.info.username': 'Username',
+    'user.info.tokens': 'Tokens',
+    'user.action.add_place': 'Add Place',
+    'user.reward.next_time': 'Next login reward available',
+    'user.places.title': 'My Registered Places',
+    'user.places.name': 'Place Name',
+    'user.places.address': 'Address',
+    'user.places.type': 'Type',
+    'user.places.fee': 'Fee',
+    'user.places.date': 'Registration Date',
+    'user.places.actions': 'Actions',
+    'user.action.edit': 'Edit'
 }; 
