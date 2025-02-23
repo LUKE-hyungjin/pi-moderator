@@ -8,6 +8,7 @@ import {
 } from "@remix-run/react";
 import { LanguageProvider } from '~/contexts/LanguageContext';
 import { SpeedInsights } from "@vercel/speed-insights/remix";
+import { Analytics } from "@vercel/analytics/remix"
 
 import "./tailwind.css";
 
@@ -55,6 +56,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <main className="flex-grow bg-[#242424]">{children}</main>
           <Footer totalUsers={totalUsers} todayUsers={todayUsers} />
           <SpeedInsights />
+          <Analytics />
           <ScrollRestoration />
           <Scripts />
         </LanguageProvider>
