@@ -1,6 +1,8 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import type { LatLngTuple } from 'leaflet';
 import L from 'leaflet';
+import 'leaflet.markercluster';
+import { useRef, useEffect } from 'react';
 
 const defaultPosition: LatLngTuple = [37.5665, 126.9780]; // 서울 좌표
 
@@ -12,7 +14,8 @@ const markerIcons = {
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
-        shadowSize: [41, 41]
+        shadowSize: [41, 41],
+        className: 'leaflet-marker-icon-preload'
     }),
     relay: new L.Icon({
         iconUrl: '/marker-icon-2x-red.png',
@@ -54,66 +57,124 @@ export interface MapProps {
 }
 
 export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
-    const filteredMarkers = selectedType === 'all'
-        ? markers
-        : markers.filter((marker: MarkerData) => marker.type === selectedType);
+    const mapRef = useRef<L.Map | null>(null);
+    const markersRef = useRef<L.Marker[]>([]);
+    const markerLayerRef = useRef<L.LayerGroup | null>(null);
+
+    // 지도 초기화
+    useEffect(() => {
+        if (!mapRef.current) {
+            mapRef.current = L.map('map', {
+                zoom: 3,
+                maxZoom: 18,
+                minZoom: 2,
+                center: [30, 0],
+                zoomControl: true,
+                attributionControl: false,
+                dragging: true,
+                scrollWheelZoom: true,
+                doubleClickZoom: true,
+                worldCopyJump: false,
+                maxBounds: [[-90, -180], [90, 180]],
+                maxBoundsViscosity: 1.0,
+                preferCanvas: true  // Canvas 렌더링 사용
+            });
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                noWrap: true
+            }).addTo(mapRef.current);
+
+            // 레이어 그룹 초기화
+            markerLayerRef.current = L.layerGroup().addTo(mapRef.current);
+
+            // 디바운스된 마커 업데이트 함수
+            const updateVisibleMarkers = debounce(() => {
+                if (!mapRef.current || !markerLayerRef.current) return;
+
+                const zoom = mapRef.current.getZoom();
+                if (zoom <= 6) {
+                    markerLayerRef.current.clearLayers();
+                    return;
+                }
+
+                const bounds = mapRef.current.getBounds();
+                const visibleMarkers = markers
+                    .filter(marker =>
+                        (selectedType === 'all' || marker.type === selectedType) &&
+                        bounds.contains(L.latLng(marker.position[0], marker.position[1]))
+                    )
+                    .slice(0, 1000); // 한 번에 표시할 최대 마커 수 제한
+
+                markerLayerRef.current.clearLayers();
+
+                // 마커 일괄 추가
+                const fragment = document.createDocumentFragment();
+                visibleMarkers.forEach(marker => {
+                    const markerInstance = L.marker(marker.position, {
+                        icon: markerIcons[marker.type]
+                    })
+                        .on('click', () => onMarkerClick?.(marker));
+                    markerLayerRef.current!.addLayer(markerInstance);
+                });
+            }, 100);
+
+            // 이벤트 리스너 등록
+            mapRef.current.on('moveend zoomend', updateVisibleMarkers);
+        }
+    }, []);
+
+    // 마커 데이터나 선택된 타입이 변경될 때 업데이트
+    useEffect(() => {
+        if (!mapRef.current || !markerLayerRef.current) return;
+
+        const updateMarkers = () => {
+            const zoom = mapRef.current!.getZoom();
+            if (zoom <= 6) return;
+
+            const bounds = mapRef.current!.getBounds();
+            markerLayerRef.current!.clearLayers();
+
+            markers
+                .filter(marker =>
+                    (selectedType === 'all' || marker.type === selectedType) &&
+                    bounds.contains(L.latLng(marker.position[0], marker.position[1]))
+                )
+                .slice(0, 1000)
+                .forEach(marker => {
+                    const markerInstance = L.marker(marker.position, {
+                        icon: markerIcons[marker.type]
+                    })
+                        .on('click', () => onMarkerClick?.(marker));
+                    markerLayerRef.current!.addLayer(markerInstance);
+                });
+        };
+
+        // 지연 실행으로 렌더링 부하 감소
+        requestAnimationFrame(updateMarkers);
+
+        return () => {
+            if (markerLayerRef.current) {
+                markerLayerRef.current.clearLayers();
+            }
+        };
+    }, [markers, selectedType]);
 
     return (
-        <div className="relative h-full w-full">
-            <MapContainer
-                center={defaultPosition}
-                zoom={13}
-                scrollWheelZoom={true}
-                style={{ height: "100%", width: "100%" }}
-            >
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {filteredMarkers.map((marker: MarkerData, index: number) => (
-                    <Marker
-                        key={index}
-                        position={marker.position}
-                        icon={markerIcons[marker.type]}  // 여기에 icon prop 추가
-                        eventHandlers={{
-                            click: () => onMarkerClick?.(marker)
-                        }}
-                    >
-                        <Popup>
-                            <div className="w-64">
-                                <h3 className="font-bold mb-2">{marker.name}</h3>
-                                {marker.image_url ? (
-                                    <img
-                                        src={marker.image_url}
-                                        alt={marker.name}
-                                        className="w-full h-40 object-cover rounded-lg mb-2"
-                                    />
-                                ) : (
-                                    <div className="w-full h-40 bg-gray-200 rounded-lg flex items-center justify-center mb-2">
-                                        이미지 없음
-                                    </div>
-                                )}
-                                <p className="text-sm mb-1">
-                                    <span className="font-medium">카테고리:</span>{' '}
-                                    {marker.type === 'education'
-                                        ? '교육'
-                                        : marker.type === 'relay'
-                                            ? '중계'
-                                            : '세무'}
-                                </p>
-                                <p className="text-sm mb-1">
-                                    <span className="font-medium">주소:</span>{' '}
-                                    {marker.address}
-                                </p>
-                                <p className="text-sm">
-                                    <span className="font-medium">수수료:</span>{' '}
-                                    {marker.feePercentage}%
-                                </p>
-                            </div>
-                        </Popup>
-                    </Marker>
-                ))}
-            </MapContainer>
-        </div>
+        <div id="map" style={{ width: '100%', height: '100%' }}></div>
     );
+}
+
+// 디바운스 함수
+function debounce(func: Function, wait: number) {
+    let timeout: NodeJS.Timeout;
+    return function executedFunction(...args: any[]) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }

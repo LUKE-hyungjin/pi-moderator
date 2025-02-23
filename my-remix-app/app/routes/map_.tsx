@@ -11,7 +11,7 @@ import { useState } from "react";
 export const loader: LoaderFunction = async () => {
     const { data: markers, error } = await supabase
         .from('markers')
-        .select('*')
+        .select('id, latitude, longitude, name, type, address, phone, fee_percentage, description, created_at, image_url')
         .order('created_at', { ascending: true });
 
     if (error) {
@@ -24,7 +24,7 @@ export const loader: LoaderFunction = async () => {
         position: [marker.latitude, marker.longitude] as [number, number],
         name: marker.name,
         address: marker.address,
-        phone: marker.number,
+        phone: marker.phone,
         feePercentage: marker.fee_percentage,
         description: marker.description,
         created_at: marker.created_at,
@@ -32,7 +32,14 @@ export const loader: LoaderFunction = async () => {
         type: marker.type as MarkerType
     }));
 
-    return json({ markers: formattedMarkers });
+    return json(
+        { markers: formattedMarkers },
+        {
+            headers: {
+                'Cache-Control': 'public, max-age=300'
+            }
+        }
+    );
 };
 
 export default function MapRoute() {
@@ -94,14 +101,12 @@ export default function MapRoute() {
                 <div className="flex flex-col lg:flex-row gap-6">
                     <div className="w-full lg:flex-1 bg-[rgba(255,255,255,0.05)] rounded-lg p-4 sm:p-6">
                         <div className="h-[400px] sm:h-[500px] lg:h-[600px]">
-                            <ClientOnly fallback={<div>지도를 불러오는 중...</div>}>
-                                {() => (
-                                    <Map
-                                        markers={markers}
-                                        onMarkerClick={setSelectedMarker}
-                                        selectedType={selectedType}  // 선택된 타입 전달
-                                    />
-                                )}
+                            <ClientOnly fallback={
+                                <div className="h-[600px] flex items-center justify-center bg-gray-100">
+                                    <div className="text-lg text-gray-600">지도를 불러오는 중...</div>
+                                </div>
+                            }>
+                                {() => <Map markers={markers} onMarkerClick={setSelectedMarker} selectedType={selectedType} />}
                             </ClientOnly>
                         </div>
                     </div>
