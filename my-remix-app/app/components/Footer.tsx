@@ -16,12 +16,22 @@ export function Footer({ totalUsers, todayUsers }: FooterProps) {
                             <span>E-mail</span>
                         </a>
                     </div>
-                    <div className="flex flex-col items-center text-sm text-gray-400">
-                        <div>© 2024 Pi-Moderator. All rights reserved.</div>
-                        <div className="flex flex-col items-center mt-1">
-                            <span>총 이용자: {totalUsers.toLocaleString()}명</span>
-                            <span>오늘 접속자: {todayUsers.toLocaleString()}명</span>
-                        </div>
+                    <div className="flex flex-col items-center md:w-1/3">
+                        <span>총 이용자: {totalUsers.toLocaleString()}명</span>
+                        <span>오늘 접속자: {todayUsers.toLocaleString()}명</span>
+                    </div>
+                    <div className="flex items-center justify-end space-x-6 md:w-1/3">
+                        <select
+                            // value={language}
+                            // onChange={(e) => setLanguage(e.target.value as 'ko' | 'en')}
+                            className="bg-[#333] text-white px-3 py-1.5 rounded-md text-sm border border-[#444] 
+                                    focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                                    hover:bg-[#444] transition-colors duration-200"
+                        >
+                            <option value="ko">한국어</option>
+                            <option value="en">English</option>
+                        </select>
+                        <div className="flex flex-col items-center text-sm text-gray-400">© 2024 Pi-Moderator. All rights reserved.</div>
                     </div>
                 </div>
             </div>
