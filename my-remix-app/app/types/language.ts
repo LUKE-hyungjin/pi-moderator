@@ -1,5 +1,5 @@
 export type Language = 'ko' | 'en';
 
-export interface Translation {
-    [key: string]: string | string[] | Translation;
-} 
+export type Translation = {
+    [key: string]: { [key: string]: string | string[] };
+};
