@@ -79,6 +79,8 @@ export const ko = {
     //// 인덱스 페이지 끝
 
     //// Pi 페이지
+    'pi.toc': '목차',
+    // Pi 페이지 인트로
     'pi.intro.title': '1. 파이코인 신규가입후 해야할 것 들',
     'pi.intro.first_day.title': '[가입 첫날]',
     'pi.intro.first_day.items': [

@@ -78,6 +78,8 @@ export const en = {
     'home.cta.button': 'Get Started',
     //// INDEX PAGE END
 
+    //// Pi Page
+    'pi.toc': 'Table of Contents',
     // Pi Page - Intro Section
     'pi.intro.title': '1. Things to Do After New Pi Coin Registration',
     'pi.intro.first_day.title': '[First Day]',
@@ -111,6 +113,7 @@ export const en = {
         '✔ Apply for migration (balance transfer)',
         '✔ Create available balance'
     ],
-    'pi.intro.periodic.n_phase': '▫ N Phase: Period not yet determined'
+    'pi.intro.periodic.n_phase': '▫ N Phase: Period not yet determined',
+
 
 }; 
