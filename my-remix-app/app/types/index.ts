@@ -62,3 +62,19 @@ export interface FooterProps {
     totalUsers: number;
     todayUsers: number;
 }
+
+export type TranslationValue = string | string[] | Array<string | {
+    text: string;
+    isWarning?: boolean;
+    isDanger?: boolean;
+    isNote?: boolean;
+    hasCheckmark?: boolean;
+    hasLineBreak?: boolean;
+}>;
+
+export interface Section {
+    id: string;
+    title: string | TranslationValue;
+    content?: React.ReactNode;
+    subsections?: Section[];
+}

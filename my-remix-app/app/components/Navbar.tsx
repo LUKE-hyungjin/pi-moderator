@@ -1,9 +1,10 @@
 import { Link, useLocation } from "@remix-run/react";
 import { useState, useEffect } from "react";
-import type { AuthResult, PaymentDTO } from "~/types";
+import type { AuthResult, PaymentDTO, TranslationValue } from "~/types";
 import { AlertModal } from "./AlertModal";
 import { useTranslation } from '~/hooks/useTranslation';
 import { useLanguage } from "~/contexts/LanguageContext";
+import { translateToString } from "~/i18n/translations";
 
 export function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -119,16 +120,16 @@ export function Navbar() {
                         <div className="flex-1 hidden md:flex justify-center px-4">
                             <div className="inline-flex items-center space-x-6 lg:space-x-16">
                                 <Link to="/" className={`text-base lg:text-lg font-medium whitespace-nowrap transition-colors duration-200 ${isActivePath('/')}`}>
-                                    {t('nav.home')}
+                                    {translateToString(t('nav.home'))}
                                 </Link>
                                 <Link to="/pi" className={`text-base lg:text-lg font-medium whitespace-nowrap transition-colors duration-200 ${isActivePath('/pi')}`}>
-                                    {t('nav.pi')}
+                                    {translateToString(t('nav.pi'))}
                                 </Link>
                                 <Link to="/map" className={`text-base lg:text-lg font-medium whitespace-nowrap transition-colors duration-200 ${isActivePath('/map')}`}>
-                                    {t('nav.map')}
+                                    {translateToString(t('nav.map'))}
                                 </Link>
                                 <Link to="/user" className={`text-base lg:text-lg font-medium whitespace-nowrap transition-colors duration-200 ${isActivePath('/user')}`}>
-                                    {t('nav.user')}
+                                    {translateToString(t('nav.user'))}
                                 </Link>
                             </div>
                         </div>
@@ -136,21 +137,21 @@ export function Navbar() {
                         <div className="w-[180px] lg:w-[300px] hidden md:flex items-center justify-end shrink-0">
                             <div className="flex items-center space-x-2">
                                 <span className="text-white text-sm lg:text-base truncate">
-                                    {auth ? `${t('nav.user')}: ${auth.user.username}` : t('nav.login_required')}
+                                    {auth ? `${translateToString(t('nav.user'))}: ${auth.user.username}` : translateToString(t('nav.login_required'))}
                                 </span>
                                 {auth ? (
                                     <button
                                         className="bg-purple-500 text-white px-2 py-1 lg:px-4 lg:py-2 text-sm lg:text-base rounded hover:bg-purple-600 whitespace-nowrap"
                                         onClick={authenticateUser}
                                     >
-                                        {t('nav.reauth')}
+                                        {translateToString(t('nav.reauth'))}
                                     </button>
                                 ) : (
                                     <button
                                         className="bg-purple-500 text-white px-2 py-1 lg:px-4 lg:py-2 text-sm lg:text-base rounded hover:bg-purple-600 whitespace-nowrap"
                                         onClick={authenticateUser}
                                     >
-                                        {t('nav.pi_auth')}
+                                        {translateToString(t('nav.pi_auth'))}
                                     </button>
                                 )}
                             </div>
@@ -173,16 +174,16 @@ export function Navbar() {
                     <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} pt-4`}>
                         <div className="flex flex-col space-y-4">
                             <Link to="/" className={`py-2 ${isActivePath('/')}`} onClick={() => setIsMenuOpen(false)}>
-                                {t('nav.home')}
+                                {translateToString(t('nav.home'))}
                             </Link>
                             <Link to="/pi" className={`py-2 ${isActivePath('/pi')}`} onClick={() => setIsMenuOpen(false)}>
-                                {t('nav.pi')}
+                                {translateToString(t('nav.pi'))}
                             </Link>
                             <Link to="/map" className={`py-2 ${isActivePath('/map')}`} onClick={() => setIsMenuOpen(false)}>
-                                {t('nav.map')}
+                                {translateToString(t('nav.map'))}
                             </Link>
                             <Link to="/user" className={`py-2 ${isActivePath('/user')}`} onClick={() => setIsMenuOpen(false)}>
-                                {t('nav.user')}
+                                {translateToString(t('nav.user'))}
                             </Link>
                         </div>
                     </div>
