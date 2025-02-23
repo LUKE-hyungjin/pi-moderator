@@ -184,7 +184,7 @@ const Navbar = () => {
       console.log('Verify response data:', responseData);
 
       if (verifyResponse.ok) {
-        // Supabase에 사용자 저장
+        // Supabase에서 사용자 데이터 조회
         const { data: userData, error: fetchError } = await supabase
           .from('users')
           .select('*')
@@ -198,35 +198,36 @@ const Navbar = () => {
 
         const now = new Date();
         const lastLoginDate = userData?.last_login_date ? new Date(userData.last_login_date) : null;
-        const canReceiveReward = !lastLoginDate ||
-          (now.getTime() - lastLoginDate.getTime()) >= 24 * 60 * 60 * 1000;
+        const timeSinceLastLogin = lastLoginDate ? now.getTime() - lastLoginDate.getTime() : null;
+        const canReceiveReward = !lastLoginDate || (timeSinceLastLogin !== null && timeSinceLastLogin >= 24 * 60 * 60 * 1000);
 
-        // 사용자 정보 업데이트
-        const { error: updateError } = await supabase
-          .from('users')
-          .upsert({
-            id: authResult.user.uid,
-            username: authResult.user.username,
-            created_at: userData?.created_at || new Date().toISOString(),
-            last_login_date: now.toISOString(),
-            points: canReceiveReward ? (userData?.points || 0) + 1 : (userData?.points || 0)
-          });
+        if (canReceiveReward) {
+          // 24시간이 지났거나 첫 로그인인 경우에만 데이터 업데이트
+          const { error: updateError } = await supabase
+            .from('users')
+            .upsert({
+              id: authResult.user.uid,
+              username: authResult.user.username,
+              created_at: userData?.created_at || new Date().toISOString(),
+              last_login_date: now.toISOString(),
+              points: (userData?.points || 0) + 1
+            });
 
-        if (updateError) {
-          console.error('Supabase error:', updateError);
-          alert('사용자 정보 저장에 실패했습니다. 다시 시도해주세요.');
-          return;
+          if (updateError) {
+            console.error('Supabase error:', updateError);
+            alert('사용자 정보 저장에 실패했습니다. 다시 시도해주세요.');
+            return;
+          }
+
+          setAlertMessage(`환영합니다!\n ${authResult.user.username}님의 인증이 완료되었습니다.\n일일 로그인 보상 1 TOKEN 지급되었습니다!`);
+        } else {
+          // 24시간이 지나지 않은 경우 메시지만 표시
+          setAlertMessage(`환영합니다!\n ${authResult.user.username}님의 인증이 완료되었습니다.`);
         }
 
         setAuth(authResult);
         localStorage.setItem('pi_auth', JSON.stringify(authResult));
-
-        if (canReceiveReward) {
-          setAlertMessage(`환영합니다!\n ${authResult.user.username}님의 인증이 완료되었습니다.\n일일 로그인 보상 1 TOKEN 지급되었습니다!`);
-        } else {
-          setAlertMessage(`환영합니다!\n ${authResult.user.username}님의 인증이 완료되었습니다.`);
-        }
-        setIsAlertOpen(true); setIsAlertOpen(true);
+        setIsAlertOpen(true);
       } else {
         console.error('Verification failed:', responseData);
         alert(`인증 실패: ${responseData.error || '사용자 검증에 실패했습니다.'}`);
@@ -263,13 +264,15 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-[#242424] text-white p-4">
+      <nav className="bg-[#1a1a1a] text-white p-4">
         <div className="container mx-auto">
           <div className="flex justify-between items-center">
             {/* 로고 영역 */}
             <div className="flex items-center space-x-4">
               <img src="/picoin_logo.png" alt="Logo" className="w-12 h-12 rounded-full" />
-              <h1 className="text-xl font-bold">Pi-Moderator</h1>
+              <Link to="/" className="text-xl font-bold hover:text-purple-400">
+                Pi-Moderator
+              </Link>
             </div>
 
             {/* 데스크톱 메뉴 */}
@@ -375,6 +378,35 @@ const Navbar = () => {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [todayUsers, setTodayUsers] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchUserStats = async () => {
+      try {
+        // 총 사용자 수 조회
+        const { count: total } = await supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true });
+
+        // 오늘 접속자 수 조회
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const { count: today_users } = await supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true })
+          .gte('last_login_date', today.toISOString());
+
+        setTotalUsers(total || 0);
+        setTodayUsers(today_users || 0);
+      } catch (error) {
+        console.error('Failed to fetch user stats:', error);
+      }
+    };
+
+    fetchUserStats();
+  }, []);
+
   return (
     <html lang="en" className="h-full bg-[#242424]">
       <head>
@@ -389,7 +421,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <main className="flex-grow bg-[#242424]">
           {children}
         </main>
-        <footer className="bg-[#242424] text-white py-6">
+        <footer className="bg-[#1a1a1a] text-white py-6">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
               <div className="flex items-center space-x-6">
@@ -403,8 +435,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <span>E-mail</span>
                 </a>
               </div>
-              <div className="text-sm text-gray-400">
-                © 2024 Pi-Moderator. All rights reserved.
+              <div className="flex flex-col items-center mt-4">
+                <span>총 이용자: {totalUsers.toLocaleString()}명</span>
+                <span>오늘 접속자: {todayUsers.toLocaleString()}명</span>
+              </div>
+              <div className="flex flex-col items-center text-sm text-gray-400">
+                <div>© 2024 Pi-Moderator. All rights reserved.</div>
               </div>
             </div>
           </div>
