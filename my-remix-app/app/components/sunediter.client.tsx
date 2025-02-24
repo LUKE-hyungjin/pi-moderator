@@ -6,9 +6,10 @@ import plugins from 'suneditor/src/plugins'
 type PropsType = {
     defaultValue?: string;
     onChange?: (value: string) => void;
+    setContents?: string;
 }
 
-export default function Editor({ defaultValue, onChange }: PropsType) {
+export default function Editor({ defaultValue, onChange, setContents }: PropsType) {
     const editor = useRef<any>();
 
 
@@ -18,10 +19,10 @@ export default function Editor({ defaultValue, onChange }: PropsType) {
                 getSunEditorInstance={(sunEditor) => {
                     editor.current = sunEditor;
                 }}
-                setContents={defaultValue}
+                setContents={setContents || defaultValue}
                 onChange={onChange}
                 setOptions={{
-                    height: '800px',
+                    height: '400px',
                     buttonList: [
                         ['undo', 'redo'],
                         ['font', 'fontSize', 'formatBlock'],

@@ -93,6 +93,75 @@ export default function AddMarker() {
     const [type, setType] = useState<MarkerType>('education');
     const [position, setPosition] = useState<[number, number]>([37.5665, 126.9780]); // 서울 중심 좌표
 
+    // 카테고리별 템플릿 정의
+    const templates = {
+        education: `
+            <div class="template-content">
+                <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">교육 정보</h3>
+                <div class="info-section" style="margin-bottom: 1em;">
+                    <p><strong>📚 교육 유형:</strong> [오프라인/온라인/하이브리드 중 선택]</p>
+                    <p><strong>👥 수용 인원:</strong> [숫자로 입력]</p>
+                    <p><strong>📝 교육 과정 소개:</strong></p>
+                    <p><strong>👨‍🏫 강사 정보:</strong></p>
+                    <p><strong>💰 교육 요금:</strong></p>
+                    <p><strong>📅 교육 일정:</strong></p>
+                </div>
+                <div>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 1em; background-color: #1e1e1e; ">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">순서</span></th>
+                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">시간</span></th>
+                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">주요내용</span></th>
+                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">담당자</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">1</td>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[시간]</td>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[내용]</td>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[담당자]</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">2</td>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[시간]</td>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[내용]</td>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[담당자]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <p><strong>ℹ️ 기타 안내사항:</strong></p>
+                </div>
+            </div>
+        `,
+        relay: `
+            <div class="template-content">
+                <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">중계 서비스 정보</h3>
+                <div class="info-section" style="margin-bottom: 1em;">
+                    <p><strong>🔄 중계 방식:</strong> [직접 중계/대행 중 선택]</p>
+                    <p><strong>⏰ 운영 시간:</strong> [예: 09:00-18:00]</p>
+                    <p><strong>📍 서비스 지역:</strong></p>
+                    <p><strong>💰 중계 수수료:</strong></p>
+                    <p><strong>📋 특이사항:</strong></p>
+                </div>
+            </div>
+        `,
+        tax: `
+            <div class="template-content">
+                <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">세무 서비스 정보</h3>
+                <div class="info-section" style="margin-bottom: 1em;">
+                    <p><strong>💼 세무 서비스:</strong> [개인/법인/모두 중 선택]</p>
+                    <p><strong>📊 전문 분야:</strong></p>
+                    <p><strong>💵 서비스 요금:</strong></p>
+                    <p><strong>🕒 상담 가능 시간:</strong></p>
+                    <p><strong>📜 자격증 및 경력:</strong></p>
+                </div>
+            </div>
+        `
+    };
 
     useEffect(() => {
         const savedAuth = localStorage.getItem('pi_auth');
@@ -100,6 +169,11 @@ export default function AddMarker() {
             setAuthData(savedAuth);
         }
     }, []);
+
+    // 카테고리 변경 시 템플릿 업데이트
+    useEffect(() => {
+        setDescription(templates[type]);
+    }, [type]);
 
     const handleMapClick = async (e: { latlng: LatLng }) => {
         const { lat, lng } = e.latlng;
@@ -165,8 +239,6 @@ export default function AddMarker() {
                         </ClientOnly>
                     </div>
 
-
-
                     {/* 위도/경도 hidden 필드 */}
                     <input type="hidden" name="latitude" value={position[0]} />
                     <input type="hidden" name="longitude" value={position[1]} />
@@ -182,7 +254,6 @@ export default function AddMarker() {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
-
 
                     <div>
                         <label htmlFor="image" className="block text-sm font-medium mb-1">
@@ -217,104 +288,22 @@ export default function AddMarker() {
                             <option value="relay">중계</option>
                             <option value="tax">세무</option>
                         </select>
+                        <p className="mt-1 text-sm text-gray-500">
+                            카테고리 변경 시 기존 작성된 내용이 사라집니다.
+                        </p>
                     </div>
-
-                    {/* 카테고리별 추가 필드 */}
-                    {type === 'education' && (
-                        <>
-                            <div>
-                                <label htmlFor="educationType" className="block text-sm font-medium mb-1">
-                                    교육 유형
-                                </label>
-                                <select
-                                    id="educationType"
-                                    name="educationType"
-                                    required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="offline">오프라인</option>
-                                    <option value="online">온라인</option>
-                                    <option value="hybrid">하이브리드</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label htmlFor="capacity" className="block text-sm font-medium mb-1">
-                                    수용 인원
-                                </label>
-                                <input
-                                    type="number"
-                                    id="capacity"
-                                    name="capacity"
-                                    min="1"
-                                    required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                        </>
-                    )}
-
-                    {type === 'relay' && (
-                        <>
-                            <div>
-                                <label htmlFor="relayType" className="block text-sm font-medium mb-1">
-                                    중계 방식
-                                </label>
-                                <select
-                                    id="relayType"
-                                    name="relayType"
-                                    required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="direct">직접 중계</option>
-                                    <option value="agency">대행</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label htmlFor="availableTime" className="block text-sm font-medium mb-1">
-                                    운영 시간
-                                </label>
-                                <input
-                                    type="text"
-                                    id="availableTime"
-                                    name="availableTime"
-                                    placeholder="예: 09:00-18:00"
-                                    required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                        </>
-                    )}
-
-                    {type === 'tax' && (
-                        <>
-                            <div>
-                                <label htmlFor="taxService" className="block text-sm font-medium mb-1">
-                                    세무 서비스
-                                </label>
-                                <select
-                                    id="taxService"
-                                    name="taxService"
-                                    required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="personal">개인</option>
-                                    <option value="corporate">법인</option>
-                                    <option value="both">모두(개인, 법인)</option>
-                                </select>
-                            </div>
-                        </>
-                    )}
 
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium mb-1">
-                            상세 설명
+                            상세 정보
                         </label>
                         <ClientOnly fallback={<div className="h-[300px] bg-gray-100 animate-pulse rounded-lg" />}>
                             {() => (
                                 <>
                                     <Sunediter
-                                        defaultValue={description}
+                                        setContents={description}
                                         onChange={(value) => setDescription(value)}
+                                        defaultValue={description}
                                     />
                                     <input
                                         type="hidden"
