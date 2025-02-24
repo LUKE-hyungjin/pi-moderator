@@ -43,7 +43,6 @@ export interface MarkerData {
     name: string;
     address: string;
     phone: string;
-    feePercentage: number;
     description: string;
     created_at: string;
     image_url: string;
@@ -191,11 +190,11 @@ export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
         requestAnimationFrame(updateMarkers);
 
         return () => {
-            if (markerLayerRef.current) {
-                markerLayerRef.current.clearLayers();
+            if (mapRef.current) {
+                mapRef.current.off('moveend zoomend');
             }
         };
-    }, [markers, selectedType]);
+    }, [markers, selectedType, onMarkerClick]);
 
     return (
         <div id="map" style={{ width: '100%', height: '100%' }}></div>

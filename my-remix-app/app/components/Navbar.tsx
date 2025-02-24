@@ -12,7 +12,7 @@ export function Navbar() {
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const location = useLocation();
-    const { language } = useLanguage();
+    const { language, setLanguage } = useLanguage();
     const { t } = useTranslation(language);
 
     useEffect(() => {
@@ -136,6 +136,16 @@ export function Navbar() {
 
                         <div className="w-[180px] lg:w-[300px] hidden md:flex items-center justify-end shrink-0">
                             <div className="flex items-center space-x-2">
+                                <select
+                                    value={language}
+                                    onChange={(e) => setLanguage(e.target.value as 'ko' | 'en')}
+                                    className="bg-[#333] text-white px-3 py-1.5 rounded-md text-sm border border-[#444] 
+                                    focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                                    hover:bg-[#444] transition-colors duration-200"
+                                >
+                                    <option value="ko">한국어</option>
+                                    <option value="en">English</option>
+                                </select>
                                 <span className="text-white text-sm lg:text-base truncate">
                                     {auth ? `${translateToString(t('nav.user'))}: ${auth.user.username}` : translateToString(t('nav.login_required'))}
                                 </span>

@@ -30,7 +30,6 @@ export async function action({ request }: ActionFunctionArgs) {
     const address = formData.get("address") as string;
     const phone = formData.get("phone") as string;
     const imageFile = formData.get("image") as File;
-    const feePercentage = parseFloat(formData.get("feePercentage") as string);
     const description = formData.get("description") as string;
     const type = formData.get("type") as MarkerType;
 
@@ -70,8 +69,7 @@ export async function action({ request }: ActionFunctionArgs) {
                 longitude,
                 address,
                 phone,
-                image_url: imageUrl, // 이미지 URL 저장
-                fee_percentage: feePercentage,
+                image_url: imageUrl,
                 rating: 0,
                 description,
                 type,
@@ -303,21 +301,6 @@ export default function AddMarker() {
                                     <option value="corporate">법인</option>
                                     <option value="both">모두(개인, 법인)</option>
                                 </select>
-                            </div>
-                            <div>
-                                <label htmlFor="feePercentage" className="block text-sm font-medium mb-1">
-                                    1파이당 수수료 (%)
-                                </label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    max="100"
-                                    id="feePercentage"
-                                    name="feePercentage"
-                                    required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
                             </div>
                         </>
                     )}

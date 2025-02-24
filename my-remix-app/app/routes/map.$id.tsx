@@ -12,7 +12,6 @@ interface MarkerDetail {
     address: string;
     phone: string;
     image_url: string;
-    fee_percentage: number;
     description: string;
     created_at: string;
     type: MarkerType;
@@ -94,10 +93,6 @@ export default function MarkerDetail() {
                                 <p>
                                     <span className="text-gray-400">카테고리:</span>{' '}
                                     {marker.type === 'education' ? '교육' : '중계'}
-                                </p>
-                                <p>
-                                    <span className="text-gray-400">1파이당 수수료:</span>{' '}
-                                    {marker.fee_percentage}%
                                 </p>
                             </div>
                         </div>

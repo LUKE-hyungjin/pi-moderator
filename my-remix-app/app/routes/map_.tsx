@@ -14,7 +14,7 @@ import { translateToString } from "~/i18n/translations";
 export const loader: LoaderFunction = async () => {
     const { data: markers, error } = await supabase
         .from('markers')
-        .select('id, latitude, longitude, name, type, address, phone, fee_percentage, description, created_at, image_url')
+        .select('id, latitude, longitude, name, type, address, phone, description, created_at, image_url')
         .order('created_at', { ascending: true });
 
     if (error) {
@@ -28,7 +28,6 @@ export const loader: LoaderFunction = async () => {
         name: marker.name,
         address: marker.address,
         phone: marker.phone,
-        feePercentage: marker.fee_percentage,
         description: marker.description,
         created_at: marker.created_at,
         image_url: marker.image_url,
@@ -167,9 +166,6 @@ function MarkerDetail({ marker }: { marker: MarkerData }) {
                     </p>
                     <p className="text-sm sm:text-base">
                         <span className="font-medium">{translateToString(t('map.marker.address'))}:</span> {marker.address}
-                    </p>
-                    <p className="text-sm sm:text-base">
-                        <span className="font-medium">{translateToString(t('map.marker.fee'))}:</span> {marker.feePercentage}{translateToString(t('map.marker.fee_unit'))}
                     </p>
                 </div>
 

@@ -4,7 +4,7 @@ import { useTranslation } from "~/hooks/useTranslation";
 import { translateToString } from "~/i18n/translations";
 
 export function Footer({ totalUsers, todayUsers }: FooterProps) {
-    const { language, setLanguage } = useLanguage();
+    const { language } = useLanguage();
     const { t } = useTranslation(language);
 
     return (
@@ -27,16 +27,6 @@ export function Footer({ totalUsers, todayUsers }: FooterProps) {
                         <span>{translateToString(t('footer.today_users'))}: {todayUsers.toLocaleString()}{translateToString(t('footer.users'))}</span>
                     </div>
                     <div className="flex items-center justify-end space-x-6 md:w-1/3">
-                        <select
-                            value={language}
-                            onChange={(e) => setLanguage(e.target.value as 'ko' | 'en')}
-                            className="bg-[#333] text-white px-3 py-1.5 rounded-md text-sm border border-[#444] 
-                                    focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
-                                    hover:bg-[#444] transition-colors duration-200"
-                        >
-                            <option value="ko">한국어</option>
-                            <option value="en">English</option>
-                        </select>
                         <span className="text-sm text-gray-400">{translateToString(t('footer.copyright'))}</span>
                     </div>
                 </div>
