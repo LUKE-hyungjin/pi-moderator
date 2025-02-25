@@ -67,16 +67,16 @@ export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
-                    mapRef.current?.setView([latitude, longitude], 13);
+                    mapRef.current?.setView([latitude, longitude], 7);
                 },
                 () => {
                     // 위치 권한이 거부되거나 오류 발생시 기본 위치(서울) 사용
-                    mapRef.current?.setView(defaultPosition, 13);
+                    mapRef.current?.setView(defaultPosition, 7);
                 }
             );
         } else {
             // 위치 정보를 지원하지 않는 브라우저는 기본 위치 사용
-            mapRef.current?.setView(defaultPosition, 13);
+            mapRef.current?.setView(defaultPosition, 7);
         }
     }, []);
 
@@ -124,6 +124,7 @@ export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
 
                 const bounds = mapRef.current.getBounds();
                 markerLayerRef.current.clearLayers();
+
 
                 // 화면에 보이는 마커만 필터링
                 const visibleMarkers = markers.filter(marker =>

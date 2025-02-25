@@ -167,20 +167,35 @@ export function Navbar() {
                             </div>
                         </div>
 
-                        <button
-                            className="md:hidden text-white"
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                {isMenuOpen ? (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                ) : (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                )}
-                            </svg>
-                        </button>
-                    </div>
+                        <div className="flex items-center space-x-2">
+                            {/* 언어 선택 - 모바일 */}
+                            <div className="md:hidden">
+                                <select
+                                    value={language}
+                                    onChange={(e) => setLanguage(e.target.value as 'ko' | 'en')}
+                                    className="bg-[#333] text-white px-2 py-1.5 rounded-md text-sm border border-[#444]
+                                    focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                >
+                                    <option value="ko">한국어</option>
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
 
+                            {/* 메뉴 버튼 */}
+                            <button
+                                className="md:hidden text-white"
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    {isMenuOpen ? (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    ) : (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    )}
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                     <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} pt-4`}>
                         <div className="flex flex-col space-y-4">
                             <Link to="/" className={`py-2 ${isActivePath('/')}`} onClick={() => setIsMenuOpen(false)}>
@@ -195,6 +210,25 @@ export function Navbar() {
                             <Link to="/user" className={`py-2 ${isActivePath('/user')}`} onClick={() => setIsMenuOpen(false)}>
                                 {translateToString(t('nav.user'))}
                             </Link>
+
+
+                            {/* 로그인 상태 및 버튼 */}
+                            <div className="py-2 border-t border-gray-700">
+                                <div className="flex flex-col space-y-2">
+                                    <span className="text-white text-sm">
+                                        {auth ? `${translateToString(t('nav.user'))}: ${auth.user.username}` : translateToString(t('nav.login_required'))}
+                                    </span>
+                                    <button
+                                        className="w-full bg-purple-500 text-white px-4 py-2 text-sm rounded hover:bg-purple-600"
+                                        onClick={() => {
+                                            authenticateUser();
+                                            setIsMenuOpen(false);
+                                        }}
+                                    >
+                                        {auth ? translateToString(t('nav.reauth')) : translateToString(t('nav.pi_auth'))}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

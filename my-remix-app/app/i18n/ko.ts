@@ -458,6 +458,75 @@ export const ko = {
     'user.places.fee': '수수료',
     'user.places.date': '등록일',
     'user.places.actions': '작업',
-    'user.action.edit': '수정'
+    'user.action.edit': '수정',
 
+    // Map Page
+    'user.map.title': '서비스 지도',
+    'user.map.description': '주변의 파이 네트워크 서비스를 찾아보세요',
+    'user.map.search.placeholder': '주소로 검색...',
+    'user.map.add_place': '장소 등록',
+    'user.map.filter.title': '서비스 유형별 필터',
+
+    // Map Place Form
+    'user.map.place.form.title': '장소 등록',
+    'user.map.place.form.name': '장소명',
+    'user.map.place.form.name.placeholder': '장소명을 입력하세요',
+    'user.map.place.form.type': '서비스 유형',
+    'user.map.place.form.type.placeholder': '서비스 유형을 선택하세요',
+    'user.map.place.form.address': '주소',
+    'user.map.place.form.address.placeholder': '주소를 입력하세요',
+    'user.map.place.form.phone': '전화번호',
+    'user.map.place.form.phone.placeholder': '전화번호를 입력하세요',
+    'user.map.place.form.description': '설명',
+    'user.map.place.form.description.placeholder': '장소 설명을 입력하세요',
+    'user.map.place.form.image': '대표 이미지',
+    'user.map.place.form.submit': '등록하기',
+    'user.map.place.form.cancel': '취소',
+
+    // Map Place Types
+    'user.map.place.type.education': '교육',
+    'user.map.place.type.relay': '중계',
+    'user.map.place.type.tax': '세무',
+
+    // Map Place Form
+    'user.map.place.form.image.description': 'JPG, PNG, GIF 형식의 이미지를 업로드해주세요.',
+    'user.map.place.form.type.warning': '카테고리 변경 시 기존 작성된 내용이 사라집니다.',
+    'user.map.place.form.location': '위치 선택',
+    'user.map.place.form.location.description': '지도를 클릭하여 위치를 선택하세요',
+    'user.map.place.form.error.auth': '사용자 인증이 필요합니다.',
+    'user.map.place.form.error.upload': '이미지 업로드 중 오류가 발생했습니다.',
+    'user.map.place.form.error.save': '장소 추가 중 오류가 발생했습니다.',
+
+    // Templates
+    'template.education.title': '교육 정보',
+    'template.education.type': '📚 교육 유형',
+    'template.education.type.placeholder': '[오프라인/온라인/하이브리드 중 선택]',
+    'template.education.capacity': '👥 수용 인원',
+    'template.education.capacity.placeholder': '[숫자로 입력]',
+    'template.education.curriculum': '📝 교육 과정 소개',
+    'template.education.instructor': '👨‍🏫 강사 정보',
+    'template.education.fee': '💰 교육 요금',
+    'template.education.schedule': '📅 교육 일정',
+    'template.education.table.order': '순서',
+    'template.education.table.time': '시간',
+    'template.education.table.content': '주요내용',
+    'template.education.table.manager': '담당자',
+    'template.education.other': 'ℹ️ 기타 안내사항',
+
+    'template.relay.title': '중계 서비스 정보',
+    'template.relay.method': '🔄 중계 방식',
+    'template.relay.method.placeholder': '[직접 중계/대행 중 선택]',
+    'template.relay.hours': '⏰ 운영 시간',
+    'template.relay.hours.placeholder': '[예: 09:00-18:00]',
+    'template.relay.area': '📍 서비스 지역',
+    'template.relay.fee': '💰 중계 수수료',
+    'template.relay.notes': '📋 특이사항',
+
+    'template.tax.title': '세무 서비스 정보',
+    'template.tax.service': '💼 세무 서비스',
+    'template.tax.service.placeholder': '[개인/법인/모두 중 선택]',
+    'template.tax.specialty': '📊 전문 분야',
+    'template.tax.fee': '💵 서비스 요금',
+    'template.tax.hours': '🕒 상담 가능 시간',
+    'template.tax.credentials': '📜 자격증 및 경력',
 };  

@@ -8,6 +8,9 @@ import { useState, useEffect } from "react";
 import Sunediter from "~/components/sunediter.client";
 import type { LatLng } from "leaflet";
 import SaveMap from "~/components/savemap.client";
+import { useLanguage } from "~/contexts/LanguageContext";
+import { useTranslation } from "~/hooks/useTranslation";
+import { translateToString } from "~/i18n/translations";
 
 export const loader: LoaderFunction = async () => {
     return json({});
@@ -87,6 +90,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function AddMarker() {
     const navigate = useNavigate();
+    const { language } = useLanguage();
+    const { t } = useTranslation(language);
     const [address, setAddress] = useState("");
     const [authData, setAuthData] = useState<string | null>(null);
     const [description, setDescription] = useState("");
@@ -94,74 +99,71 @@ export default function AddMarker() {
     const [position, setPosition] = useState<[number, number]>([37.5665, 126.9780]); // 서울 중심 좌표
 
     // 카테고리별 템플릿 정의
-    const templates = {
+    const getTemplates = (t: any) => ({
         education: `
             <div class="template-content">
-                <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">교육 정보</h3>
+                <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">${translateToString(t('template.education.title'))}</h3>
                 <div class="info-section" style="margin-bottom: 1em;">
-                    <p><strong>📚 교육 유형:</strong> [오프라인/온라인/하이브리드 중 선택]</p>
-                    <p><strong>👥 수용 인원:</strong> [숫자로 입력]</p>
-                    <p><strong>📝 교육 과정 소개:</strong></p>
-                    <p><strong>👨‍🏫 강사 정보:</strong></p>
-                    <p><strong>💰 교육 요금:</strong></p>
-                    <p><strong>📅 교육 일정:</strong></p>
+                    <p><strong>${translateToString(t('template.education.type'))}:</strong> ${translateToString(t('template.education.type.placeholder'))}</p>
+                    <p><strong>${translateToString(t('template.education.capacity'))}:</strong> ${translateToString(t('template.education.capacity.placeholder'))}</p>
+                    <p><strong>${translateToString(t('template.education.curriculum'))}:</strong></p>
+                    <p><strong>${translateToString(t('template.education.instructor'))}:</strong></p>
+                    <p><strong>${translateToString(t('template.education.fee'))}:</strong></p>
+                    <p><strong>${translateToString(t('template.education.schedule'))}:</strong></p>
                 </div>
                 <div>
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 1em; background-color: #1e1e1e; ">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 1em; background-color: #1e1e1e;">
                         <thead>
                             <tr>
-                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">순서</span></th>
-                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">시간</span></th>
-                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">주요내용</span></th>
-                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">담당자</span></th>
+                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">${translateToString(t('template.education.table.order'))}</span></th>
+                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">${translateToString(t('template.education.table.time'))}</span></th>
+                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">${translateToString(t('template.education.table.content'))}</span></th>
+                                <th style="border: 1px solid #333; padding: 8px; background-color: #000000;"><span style="color: #000000;">${translateToString(t('template.education.table.manager'))}</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">1</td>
-                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[시간]</td>
-                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[내용]</td>
-                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[담당자]</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">2</td>
-                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[시간]</td>
-                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[내용]</td>
-                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[담당자]</td>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[${translateToString(t('template.education.table.time'))}]</td>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[${translateToString(t('template.education.table.content'))}]</td>
+                                <td style="border: 1px solid #333; padding: 8px; color: #e0e0e0; background-color: #1e1e1e;">[${translateToString(t('template.education.table.manager'))}]</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div>
-                    <p><strong>ℹ️ 기타 안내사항:</strong></p>
+                    <p><strong>${translateToString(t('template.education.other'))}:</strong></p>
                 </div>
             </div>
         `,
         relay: `
             <div class="template-content">
-                <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">중계 서비스 정보</h3>
+                <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">${translateToString(t('template.relay.title'))}</h3>
                 <div class="info-section" style="margin-bottom: 1em;">
-                    <p><strong>🔄 중계 방식:</strong> [직접 중계/대행 중 선택]</p>
-                    <p><strong>⏰ 운영 시간:</strong> [예: 09:00-18:00]</p>
-                    <p><strong>📍 서비스 지역:</strong></p>
-                    <p><strong>💰 중계 수수료:</strong></p>
-                    <p><strong>📋 특이사항:</strong></p>
+                    <p><strong>${translateToString(t('template.relay.method'))}:</strong> ${translateToString(t('template.relay.method.placeholder'))}</p>
+                    <p><strong>${translateToString(t('template.relay.hours'))}:</strong> ${translateToString(t('template.relay.hours.placeholder'))}</p>
+                    <p><strong>${translateToString(t('template.relay.area'))}:</strong></p>
+                    <p><strong>${translateToString(t('template.relay.fee'))}:</strong></p>
+                    <p><strong>${translateToString(t('template.relay.notes'))}:</strong></p>
                 </div>
             </div>
         `,
         tax: `
             <div class="template-content">
-                <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">세무 서비스 정보</h3>
+                <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">${translateToString(t('template.tax.title'))}</h3>
                 <div class="info-section" style="margin-bottom: 1em;">
-                    <p><strong>💼 세무 서비스:</strong> [개인/법인/모두 중 선택]</p>
-                    <p><strong>📊 전문 분야:</strong></p>
-                    <p><strong>💵 서비스 요금:</strong></p>
-                    <p><strong>🕒 상담 가능 시간:</strong></p>
-                    <p><strong>📜 자격증 및 경력:</strong></p>
+                    <p><strong>${translateToString(t('template.tax.service'))}:</strong> ${translateToString(t('template.tax.service.placeholder'))}</p>
+                    <p><strong>${translateToString(t('template.tax.specialty'))}:</strong></p>
+                    <p><strong>${translateToString(t('template.tax.fee'))}:</strong></p>
+                    <p><strong>${translateToString(t('template.tax.hours'))}:</strong></p>
+                    <p><strong>${translateToString(t('template.tax.credentials'))}:</strong></p>
                 </div>
             </div>
         `
-    };
+    });
+
+    // 컴포넌트 내부에서 사용
+    const templates = getTemplates(t);
 
     useEffect(() => {
         const savedAuth = localStorage.getItem('pi_auth');
@@ -194,7 +196,9 @@ export default function AddMarker() {
     return (
         <div className="container mx-auto px-6 py-8">
             <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl font-bold mb-6">새로운 장소 추가</h2>
+                <h2 className="text-3xl font-bold mb-6">
+                    {translateToString(t('user.map.place.form.title'))}
+                </h2>
                 <Form method="post" className="space-y-6" encType="multipart/form-data">
                     <input
                         type="hidden"
@@ -205,13 +209,14 @@ export default function AddMarker() {
                     {/* 장소 이름 입력 필드 */}
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium mb-1">
-                            장소 이름
+                            {translateToString(t('user.map.place.form.name'))}
                         </label>
                         <input
                             type="text"
                             id="name"
                             name="name"
                             required
+                            placeholder={translateToString(t('user.map.place.form.name.placeholder'))}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -219,7 +224,7 @@ export default function AddMarker() {
                     {/* 선택된 주소 표시 */}
                     <div>
                         <label htmlFor="address" className="block text-sm font-medium mb-1">
-                            선택된 주소
+                            {translateToString(t('user.map.place.form.address'))}
                         </label>
                         <input
                             type="text"
@@ -228,13 +233,14 @@ export default function AddMarker() {
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                             required
+                            placeholder={translateToString(t('user.map.place.form.address.placeholder'))}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
                     {/* 지도 */}
                     <div className="h-[400px] bg-gray-100 rounded-lg overflow-hidden">
-                        <ClientOnly fallback={<div>지도를 불러오는 중...</div>}>
+                        <ClientOnly fallback={<div>{translateToString(t('map.loading'))}</div>}>
                             {() => <SaveMap position={position} onMapClick={handleMapClick} />}
                         </ClientOnly>
                     </div>
@@ -244,20 +250,20 @@ export default function AddMarker() {
                     <input type="hidden" name="longitude" value={position[1]} />
                     <div>
                         <label htmlFor="phone" className="block text-sm font-medium mb-1">
-                            전화번호
+                            {translateToString(t('user.map.place.form.phone'))}
                         </label>
                         <input
                             type="tel"
                             id="phone"
                             name="phone"
-                            placeholder="+1 (234) 567-8900"
+                            placeholder={translateToString(t('user.map.place.form.phone.placeholder'))}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
                     <div>
                         <label htmlFor="image" className="block text-sm font-medium mb-1">
-                            대표 이미지
+                            {translateToString(t('user.map.place.form.image'))}
                         </label>
                         <input
                             type="file"
@@ -268,13 +274,13 @@ export default function AddMarker() {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <p className="mt-1 text-sm text-gray-500">
-                            JPG, PNG, GIF 형식의 이미지를 업로드해주세요.
+                            {translateToString(t('user.map.place.form.image.description'))}
                         </p>
                     </div>
 
                     <div>
                         <label htmlFor="type" className="block text-sm font-medium mb-1">
-                            카테고리
+                            {translateToString(t('user.map.place.form.type'))}
                         </label>
                         <select
                             id="type"
@@ -284,18 +290,18 @@ export default function AddMarker() {
                             required
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                            <option value="education">교육</option>
-                            <option value="relay">중계</option>
-                            <option value="tax">세무</option>
+                            <option value="education">{translateToString(t('user.map.place.type.education'))}</option>
+                            <option value="relay">{translateToString(t('user.map.place.type.relay'))}</option>
+                            <option value="tax">{translateToString(t('user.map.place.type.tax'))}</option>
                         </select>
                         <p className="mt-1 text-sm text-gray-500">
-                            카테고리 변경 시 기존 작성된 내용이 사라집니다.
+                            {translateToString(t('user.map.place.form.type.warning'))}
                         </p>
                     </div>
 
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium mb-1">
-                            상세 정보
+                            {translateToString(t('user.map.place.form.description'))}
                         </label>
                         <ClientOnly fallback={<div className="h-[300px] bg-gray-100 animate-pulse rounded-lg" />}>
                             {() => (
@@ -315,19 +321,19 @@ export default function AddMarker() {
                         </ClientOnly>
                     </div>
 
-                    <div className="flex gap-4 pt-6">
-                        <button
-                            type="submit"
-                            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-                        >
-                            추가하기
-                        </button>
+                    <div className="flex justify-end space-x-4">
                         <button
                             type="button"
-                            onClick={() => navigate("/user")}
-                            className="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg"
+                            onClick={() => navigate(-1)}
+                            className="px-4 py-2 text-gray-600 hover:text-gray-800"
                         >
-                            취소
+                            {translateToString(t('user.map.place.form.cancel'))}
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                        >
+                            {translateToString(t('user.map.place.form.submit'))}
                         </button>
                     </div>
                 </Form>
