@@ -125,17 +125,13 @@ export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
                 const bounds = mapRef.current.getBounds();
                 markerLayerRef.current.clearLayers();
 
-
                 // 화면에 보이는 마커만 필터링
                 const visibleMarkers = markers.filter(marker =>
                     (selectedType === 'all' || marker.type === selectedType) &&
                     bounds.contains(L.latLng(marker.position[0], marker.position[1]))
                 );
 
-                markerLayerRef.current.clearLayers();
-
                 // 마커 일괄 추가
-                const fragment = document.createDocumentFragment();
                 visibleMarkers.forEach(marker => {
                     const markerInstance = L.marker(marker.position, {
                         icon: markerIcons[marker.type]
@@ -147,8 +143,11 @@ export function Map({ markers, onMarkerClick, selectedType }: MapProps) {
 
             // 이벤트 리스너 등록
             mapRef.current.on('moveend zoomend', updateVisibleMarkers);
+
+            // 초기 마커 표시를 위해 즉시 실행
+            setTimeout(() => updateVisibleMarkers(), 100);
         }
-    }, []);
+    }, [markers, selectedType, onMarkerClick]);
 
     // 마커 아이콘 프리로딩
     useEffect(() => {
