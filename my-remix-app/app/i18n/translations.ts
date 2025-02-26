@@ -1,10 +1,12 @@
 import { ko } from './ko';
 import { en } from './en';
+import { ar } from './arap';
 import type { Translation } from '~/types/language';
 
 export const translations: Translation = {
     ko: { ...ko },
-    en: { ...en }
+    en: { ...en },
+    ar: { ...ar }
 };
 
 export const translateToString = (value: any): string => {
