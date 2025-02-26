@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
     { name: "description", content: "파이코인 커뮤니티의 중심, Pi Moderator에서 모든 정보를 확인하세요!" },
   ];
 };
-
+//인덱스입니다.
 export default function Index() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
