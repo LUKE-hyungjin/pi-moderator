@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 
 // Pi Network 인증 타입
 interface PiUser {
@@ -144,7 +144,7 @@ export default function UserProfilePage() {
                     </div>
 
                     <Button
-                        onClick={() => router.push('/map')}
+                        onClick={() => router.push('/map/add-place')}
                         className="bg-green-500 hover:bg-green-600 w-full rounded-lg text-xl py-6 mb-8"
                     >
                         {t('add_place')}

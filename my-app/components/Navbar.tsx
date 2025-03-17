@@ -20,6 +20,7 @@ import { Menu, X } from 'lucide-react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { AlertModal } from '@/components/AlertModal';
 import Script from 'next/script';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 // Pi Network 인증 타입
 interface PiUser {
@@ -197,119 +198,130 @@ export default function Navbar() {
                 onLoad={handleSdkLoad}
                 strategy="afterInteractive"
             />
-            <nav className="sticky top-0 w-full bg-black/95 backdrop-blur-md text-white border-b border-white/10 shadow-lg z-50">
+            <nav className="sticky top-0 w-full dark:bg-black/95 bg-white/95 backdrop-blur-md dark:text-white text-black border-b dark:border-white/10 border-black/10 shadow-lg z-100">
                 <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-                    {/* 로고 */}
-                    <Link href="/" className="flex items-center gap-3 group">
-                        <Avatar className="w-9 h-9 border-2 border-purple-500 transition-transform group-hover:scale-110">
-                            <AvatarFallback className="bg-gradient-to-br from-purple-600 to-pink-600 text-white text-xl font-bold">
-                                π
-                            </AvatarFallback>
-                        </Avatar>
-                        <span className="font-bold text-xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Pi-Moderator</span>
-                    </Link>
+                    {/* 로고와 데스크톱 네비게이션 */}
+                    <div className="flex items-center gap-6">
+                        {/* 로고 */}
+                        <Link href="/" className="flex items-center gap-3 group">
+                            <Avatar className="w-9 h-9 border-2 border-purple-500 transition-transform group-hover:scale-110">
+                                <AvatarFallback className="bg-gradient-to-br from-purple-600 to-pink-600 text-white text-xl font-bold">
+                                    π
+                                </AvatarFallback>
+                            </Avatar>
+                            <span className="font-bold text-xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Pi-Moderator</span>
+                        </Link>
 
-                    {/* 데스크톱 네비게이션 */}
-                    <div className="hidden md:flex items-center gap-8">
-                        {navLinks.map((link) => (
-                            <I18nLink
-                                key={link.href}
-                                href={link.href}
-                                className="hover:text-purple-400 transition-colors relative group py-1"
-                            >
-                                {link.label}
-                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500 transition-all duration-300 group-hover:w-full"></span>
-                            </I18nLink>
-                        ))}
+                        {/* 데스크톱 네비게이션 */}
+                        <div className="hidden md:flex items-center gap-6">
+                            {navLinks.map((link) => (
+                                <I18nLink
+                                    key={link.href}
+                                    href={link.href}
+                                    className="hover:text-purple-400 transition-colors relative group py-1"
+                                >
+                                    {link.label}
+                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500 transition-all duration-300 group-hover:w-full"></span>
+                                </I18nLink>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* 데스크톱 유틸리티 메뉴 */}
-                    <div className="hidden md:flex items-center gap-4">
-                        <LanguageSwitcher />
-                        {auth ? (
-                            <div className="flex items-center gap-3">
-                                <span className="text-purple-300 text-sm">{auth.user.username}</span>
-                                <Button
-                                    variant="destructive"
-                                    onClick={handleSignOut}
-                                    className="rounded-full"
-                                >
-                                    {t('logout')}
-                                </Button>
-                            </div>
-                        ) : (
-                            <>
-                                <span className="text-gray-400 text-sm">{t('login_required')}</span>
-                                <Button
-                                    onClick={authenticateUser}
-                                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-full"
-                                >
-                                    {t('auth')}
-                                </Button>
-                            </>
-                        )}
-                    </div>
+                    {/* 중앙 여백 */}
+                    <div className="flex-1"></div>
 
-                    {/* 모바일 메뉴 버튼 */}
-                    <div className="md:hidden flex items-center gap-4">
-                        <LanguageSwitcher />
-                        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-                            <SheetTrigger asChild>
-                                <Button variant="ghost" size="icon" className="hover:bg-white/10">
-                                    <Menu className="h-6 w-6" />
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="right" className="bg-zinc-900/98 text-white border-l border-white/10 shadow-xl">
-                                <SheetHeader>
-                                    <SheetTitle className="text-white text-xl">메뉴</SheetTitle>
-                                    <SheetDescription className="text-gray-400">
-                                        사이트 내비게이션
-                                    </SheetDescription>
-                                </SheetHeader>
-                                <div className="flex flex-col gap-8 mt-10 text-center">
-                                    {navLinks.map((link) => (
-                                        <SheetClose asChild key={link.href}>
-                                            <I18nLink
-                                                href={link.href}
-                                                className="text-lg hover:text-purple-400 transition-colors flex items-center justify-center"
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                {link.label}
-                                            </I18nLink>
-                                        </SheetClose>
-                                    ))}
-                                    <hr className="border-white/10" />
-                                    {auth ? (
-                                        <>
-                                            <span className="text-purple-300 text-sm">{auth.user.username}</span>
-                                            <Button
-                                                variant="destructive"
-                                                className="w-full rounded-full"
-                                                onClick={() => {
-                                                    handleSignOut();
-                                                    setIsOpen(false);
-                                                }}
-                                            >
-                                                {t('logout')}
-                                            </Button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className="text-gray-400 text-sm">{t('login_required')}</span>
-                                            <Button
-                                                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 w-full rounded-full"
-                                                onClick={() => {
-                                                    authenticateUser();
-                                                    setIsOpen(false);
-                                                }}
-                                            >
-                                                {t('auth')} π
-                                            </Button>
-                                        </>
-                                    )}
+                    {/* 유틸리티 메뉴 */}
+                    <div className="flex items-center gap-4">
+                        {/* 데스크톱 유틸리티 메뉴 */}
+                        <div className="hidden md:flex items-center gap-3">
+                            <ThemeToggle />
+                            <LanguageSwitcher />
+                            {auth ? (
+                                <div className="flex items-center gap-3">
+                                    <span className="text-purple-300 text-sm">{auth.user.username}</span>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={handleSignOut}
+                                        className="rounded-full"
+                                    >
+                                        {t('logout')}
+                                    </Button>
                                 </div>
-                            </SheetContent>
-                        </Sheet>
+                            ) : (
+                                <>
+                                    <span className="dark:text-gray-400 text-gray-600 text-sm">{t('login_required')}</span>
+                                    <Button
+                                        onClick={authenticateUser}
+                                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-full"
+                                    >
+                                        {t('auth')} π
+                                    </Button>
+                                </>
+                            )}
+                        </div>
+
+                        {/* 모바일 메뉴 버튼 */}
+                        <div className="md:hidden flex items-center gap-3">
+                            <ThemeToggle />
+                            <LanguageSwitcher />
+                            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                                <SheetTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="hover:bg-white/10">
+                                        <Menu className="h-6 w-6" />
+                                    </Button>
+                                </SheetTrigger>
+                                <SheetContent side="right" className="bg-zinc-900/98 text-white border-l border-white/10 shadow-xl">
+                                    <SheetHeader>
+                                        <SheetTitle className="text-white text-xl">메뉴</SheetTitle>
+                                        <SheetDescription className="text-gray-400">
+                                            사이트 내비게이션
+                                        </SheetDescription>
+                                    </SheetHeader>
+                                    <div className="flex flex-col gap-8 mt-10 text-center">
+                                        {navLinks.map((link) => (
+                                            <SheetClose asChild key={link.href}>
+                                                <I18nLink
+                                                    href={link.href}
+                                                    className="text-lg hover:text-purple-400 transition-colors flex items-center justify-center"
+                                                    onClick={() => setIsOpen(false)}
+                                                >
+                                                    {link.label}
+                                                </I18nLink>
+                                            </SheetClose>
+                                        ))}
+                                        <hr className="border-white/10" />
+                                        {auth ? (
+                                            <>
+                                                <span className="text-purple-300 text-sm">{auth.user.username}</span>
+                                                <Button
+                                                    variant="destructive"
+                                                    className="w-full rounded-full"
+                                                    onClick={() => {
+                                                        handleSignOut();
+                                                        setIsOpen(false);
+                                                    }}
+                                                >
+                                                    {t('logout')}
+                                                </Button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="text-gray-400 text-sm">{t('login_required')}</span>
+                                                <Button
+                                                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 w-full rounded-full"
+                                                    onClick={() => {
+                                                        authenticateUser();
+                                                        setIsOpen(false);
+                                                    }}
+                                                >
+                                                    {t('auth')} π
+                                                </Button>
+                                            </>
+                                        )}
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
                     </div>
                 </div>
             </nav>

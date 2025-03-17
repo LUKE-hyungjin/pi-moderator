@@ -7,47 +7,26 @@ export async function GET(request: NextRequest) {
     try {
         const supabase = createApiClient();
 
-        // URL 파라미터에서 pi_uid 확인
-        const url = new URL(request.url);
-        const piUid = url.searchParams.get('pi_uid');
+        // 인증 처리가 필요하지만 간단한 구현을 위해 생략
 
-        if (piUid) {
-            // 특정 Pi UID로 사용자 조회
-            const { data, error } = await supabase
-                .from('users')
-                .select('*')
-                .eq('pi_uid', piUid);
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .order('created_at', { ascending: false });
 
-            if (error) {
-                console.error('특정 사용자 조회 오류:', error);
-                return NextResponse.json(
-                    { error: '사용자를 가져오는 중 오류가 발생했습니다.' },
-                    { status: 500 }
-                );
-            }
-
-            return NextResponse.json(data);
-        } else {
-            // 인증 처리가 필요하지만 간단한 구현을 위해 생략
-            const { data, error } = await supabase
-                .from('users')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                console.error('사용자 조회 오류:', error);
-                return NextResponse.json(
-                    { error: '사용자 목록을 가져오는 중 오류가 발생했습니다.' },
-                    { status: 500 }
-                );
-            }
-
-            return NextResponse.json(data);
+        if (error) {
+            console.error('사용자 조회 오류:', error);
+            return NextResponse.json(
+                { error: '사용자 목록을 가져오는 중 오류가 발생했습니다.' },
+                { status: 500 }
+            );
         }
+
+        return NextResponse.json(data);
     } catch (error) {
         console.error('사용자 조회 처리 오류:', error);
         return NextResponse.json(
-            { error: '사용자를 가져오는 중 오류가 발생했습니다.' },
+            { error: '사용자 목록을 가져오는 중 오류가 발생했습니다.' },
             { status: 500 }
         );
     }

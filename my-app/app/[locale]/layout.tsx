@@ -6,6 +6,7 @@ import { routing } from '@/i18n/routing';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getTotalUsers, getTodayUsers } from '@/lib/supabase/actions';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 type Params = Promise<{ locale: never }>;
 
@@ -32,16 +33,24 @@ export default async function LocaleLayout({
   const todayUsers = await getTodayUsers();
 
   return (
-    <html lang={locale}>
-      <NextIntlClientProvider messages={messages}>
-        <body className="bg-black text-white min-h-screen flex flex-col">
-          <Navbar />
-          <main className="flex-grow flex flex-col">
-            {children}
-          </main>
-          <Footer totalUsers={totalUsers} todayUsers={todayUsers} />
-        </body>
-      </NextIntlClientProvider>
+    <html lang={locale} suppressHydrationWarning>
+      <head />
+      <body className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={true}
+          enableColorScheme={true}
+        >
+          <NextIntlClientProvider messages={messages}>
+            <Navbar />
+            <main className="flex-grow flex flex-col">
+              {children}
+            </main>
+            <Footer totalUsers={totalUsers} todayUsers={todayUsers} />
+          </NextIntlClientProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
