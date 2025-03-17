@@ -1,18 +1,123 @@
 import { useTranslations } from 'next-intl';
-import { Link as I18bLink } from '@/i18n/routing';
-import { Button } from "@/components/ui/button"
+import { Link as I18nLink } from '@/i18n/routing';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, BookOpen, Newspaper, Store, Receipt } from "lucide-react";
 
 export default function Home() {
-  const t = useTranslations();
+  const t = useTranslations('Home');
+
+  const services = [
+    {
+      title: t('education_title'),
+      description: t('education_description'),
+      cta: t('education_cta'),
+      icon: <BookOpen className="h-8 w-8 text-blue-500" />,
+      href: '/education',
+      color: 'blue'
+    },
+    {
+      title: t('exchange_title'),
+      description: t('exchange_description'),
+      cta: t('exchange_cta'),
+      icon: <Store className="h-8 w-8 text-red-500" />,
+      href: '/exchange',
+      color: 'red'
+    },
+    {
+      title: t('support_title'),
+      description: t('support_description'),
+      cta: t('support_cta'),
+      icon: <Receipt className="h-8 w-8 text-green-500" />,
+      href: '/tax',
+      color: 'green'
+    },
+    {
+      title: t('news_title'),
+      description: t('news_description'),
+      cta: t('news_cta'),
+      icon: <Newspaper className="h-8 w-8 text-yellow-500" />,
+      href: '/news',
+      color: 'yellow'
+    }
+  ];
 
   return (
-    <main>
-      <h1>{t('Home.title')}</h1>
-      <p>{t('Home.description')}</p>
-      <I18bLink href="/about">About Page</I18bLink>;
-      <div>
-        <Button>Click me</Button>
-      </div>
+    <main className="flex flex-col min-h-screen">
+      {/* 히어로 섹션 */}
+      <section className="pt-16 pb-20 text-center bg-gradient-to-b from-black to-zinc-900 text-white">
+        <div className="container mx-auto px-4">
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+            {t('title')}
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+            {t('description')}
+          </p>
+        </div>
+      </section>
+
+      {/* 미션 섹션 */}
+      <section className="py-16 bg-zinc-900 text-white">
+        <div className="container mx-auto px-4">
+          <Card className="bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700 shadow-lg shadow-purple-900/20 text-white overflow-hidden">
+            <CardHeader className="border-b border-zinc-700/50 pb-4">
+              <CardTitle className="text-2xl md:text-3xl text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                {t('mission_title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <p className="text-center text-gray-300 text-lg leading-relaxed">{t('mission_description')}</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* 서비스 섹션 */}
+      <section className="py-16 bg-black text-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-10 text-center">
+            <span className="border-b-2 border-purple-500 pb-2">Pi Moderator Services</span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {services.map((service, index) => (
+              <Card key={index} className="group bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700 hover:border-zinc-500 shadow-lg hover:shadow-xl transition-all duration-300 text-white overflow-hidden">
+                <CardHeader className="flex flex-row items-center gap-4 pb-2">
+                  <div className="p-2 rounded-xl bg-zinc-900 border border-zinc-700 group-hover:border-zinc-600 transition-colors">
+                    {service.icon}
+                  </div>
+                  <div className="flex flex-col">
+                    <CardTitle className={`text-xl text-${service.color}-400 flex items-center gap-2`}>
+                      {service.title}
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-300 min-h-[80px] text-sm md:text-base">{service.description}</p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <I18nLink
+                    href={service.href}
+                    className={`inline-flex items-center text-${service.color}-400 hover:text-${service.color}-300 transition-colors group-hover:translate-x-1 duration-300`}
+                  >
+                    {service.cta} <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </I18nLink>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA 섹션 */}
+      <section className="py-20 bg-gradient-to-br from-purple-900 to-indigo-900 text-white text-center">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">{t('future_title')}</h2>
+          <p className="text-lg text-gray-300 mb-10 max-w-3xl mx-auto">{t('future_description')}</p>
+          <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-lg px-8 py-6 h-auto rounded-full shadow-lg shadow-purple-900/50 transition-transform hover:scale-105">
+            {t('start_button')}
+          </Button>
+        </div>
+      </section>
     </main>
   );
 }

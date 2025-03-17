@@ -1,6 +1,38 @@
 {
     "Home": {
-        "title": "Home",
-        "description": "Welcome to the home page."
+        "title": "Everything about Pi Coin, Pi Moderator",
+        "description": "Providing safe and reliable Pi Coin information and services",
+        "mission_title": "Our Mission",
+        "mission_description": "Pi Moderator was created for the growth and development of the Pi Coin community. We promote the healthy development of the Pi Coin ecosystem through transparent and reliable information.",
+        "education_title": "Education Service",
+        "education_description": "We provide detailed guides for Pi Coin beginners and advanced information for experienced users.",
+        "education_cta": "Find Education",
+        "exchange_title": "Exchange Service",
+        "exchange_description": "We provide safe and reliable Pi Coin exchange services.",
+        "exchange_cta": "Find Exchange",
+        "support_title": "Tax Service",
+        "support_description": "We provide tax filing guidance and consultation for Pi Coin transactions and earnings.",
+        "support_cta": "Tax Consultation",
+        "news_title": "Latest News",
+        "news_description": "We quickly deliver the latest news about Pi Coin mainnet, KYC, mining, etc.",
+        "news_cta": "View News",
+        "future_title": "Let's Create the Future of Pi Coin Together",
+        "future_description": "With Pi Moderator, the value of Pi Coin can shine even brighter.",
+        "start_button": "Get Started"
+    },
+    "Navbar": {
+        "home": "Home",
+        "picoin": "Pi Coin",
+        "map": "Map",
+        "login_required": "Login required",
+        "auth": "Pi Network Auth",
+        "logout": "Logout"
+    },
+    "Footer": {
+        "email": "Email",
+        "total_users": "Total Users",
+        "today_users": "Today's Visitors",
+        "users": "",
+        "copyright": "© 2024 Pi Moderator. All rights reserved."
     }
 }

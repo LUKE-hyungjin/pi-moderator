@@ -3,6 +3,9 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { getTotalUsers, getTodayUsers } from '@/lib/supabase/actions';
 
 type Params = Promise<{ locale: never }>;
 
@@ -24,10 +27,18 @@ export default async function LocaleLayout({
   // 클라이언트에게 모든 메시지 제공
   const messages = await getMessages();
 
+  // Supabase에서 사용자 통계 조회
+  const totalUsers = await getTotalUsers();
+  const todayUsers = await getTodayUsers();
+
   return (
     <html lang={locale}>
       <NextIntlClientProvider messages={messages}>
-        <body>{children}</body>
+        <body className="bg-black text-white">
+          <Navbar />
+          {children}
+          <Footer totalUsers={totalUsers} todayUsers={todayUsers} />
+        </body>
       </NextIntlClientProvider>
     </html>
   );
