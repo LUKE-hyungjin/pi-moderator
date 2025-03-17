@@ -34,9 +34,11 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <NextIntlClientProvider messages={messages}>
-        <body className="bg-black text-white">
+        <body className="bg-black text-white min-h-screen flex flex-col">
           <Navbar />
-          {children}
+          <main className="flex-grow flex flex-col">
+            {children}
+          </main>
           <Footer totalUsers={totalUsers} todayUsers={todayUsers} />
         </body>
       </NextIntlClientProvider>

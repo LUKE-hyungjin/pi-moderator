@@ -12,6 +12,9 @@ import {
     SheetContent,
     SheetTrigger,
     SheetClose,
+    SheetHeader,
+    SheetTitle,
+    SheetDescription,
 } from '@/components/ui/sheet';
 import { Menu, X } from 'lucide-react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -57,7 +60,13 @@ export default function Navbar() {
         { href: '/', label: t('home') },
         { href: '/picoin', label: t('picoin') },
         { href: '/map', label: t('map') },
+        { href: '/user', label: t('user') },
     ];
+
+    // 인증된 사용자인 경우 사용자 프로필 링크 추가 (더 이상 사용하지 않음)
+    // const navLinksWithProfile = auth 
+    //     ? [...navLinks, { href: '/user', label: t('user') }]
+    //     : navLinks;
 
     // Pi Network SDK 로드 핸들러
     const handleSdkLoad = () => {
@@ -235,7 +244,7 @@ export default function Navbar() {
                                     onClick={authenticateUser}
                                     className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-full"
                                 >
-                                    {t('auth')} π
+                                    {t('auth')}
                                 </Button>
                             </>
                         )}
@@ -251,12 +260,18 @@ export default function Navbar() {
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="right" className="bg-zinc-900/98 text-white border-l border-white/10 shadow-xl">
-                                <div className="flex flex-col gap-8 mt-10">
+                                <SheetHeader>
+                                    <SheetTitle className="text-white text-xl">메뉴</SheetTitle>
+                                    <SheetDescription className="text-gray-400">
+                                        사이트 내비게이션
+                                    </SheetDescription>
+                                </SheetHeader>
+                                <div className="flex flex-col gap-8 mt-10 text-center">
                                     {navLinks.map((link) => (
                                         <SheetClose asChild key={link.href}>
                                             <I18nLink
                                                 href={link.href}
-                                                className="text-lg hover:text-purple-400 transition-colors flex items-center"
+                                                className="text-lg hover:text-purple-400 transition-colors flex items-center justify-center"
                                                 onClick={() => setIsOpen(false)}
                                             >
                                                 {link.label}

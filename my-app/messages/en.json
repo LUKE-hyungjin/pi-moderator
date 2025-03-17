@@ -26,7 +26,19 @@
         "map": "Map",
         "login_required": "Login required",
         "auth": "Pi Network Auth",
-        "logout": "Logout"
+        "logout": "Logout",
+        "user": "My Profile"
+    },
+    "User": {
+        "title": "User Information",
+        "username": "Username",
+        "tokens": "Tokens",
+        "add_place": "Add Place",
+        "next_reward": "Next login reward available",
+        "auth_required": "Authentication Required",
+        "auth_message": "Please log in to use this service.",
+        "pi_browser_required": "Please access through Pi Browser and log in.",
+        "go_home": "Back to Home"
     },
     "Footer": {
         "email": "Email",

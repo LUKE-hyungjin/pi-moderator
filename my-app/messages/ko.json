@@ -26,7 +26,19 @@
         "map": "지도",
         "login_required": "로그인이 필요합니다",
         "auth": "Pi Network 인증",
-        "logout": "로그아웃"
+        "logout": "로그아웃",
+        "user": "내 정보"
+    },
+    "User": {
+        "title": "사용자 정보",
+        "username": "사용자명",
+        "tokens": "토큰",
+        "add_place": "장소 추가하기",
+        "next_reward": "다음 보상 시간",
+        "auth_required": "사용자 인증 필요",
+        "auth_message": "서비스를 이용하기 위해서는 로그인이 필요합니다.",
+        "pi_browser_required": "Pi Browser에 접속해서 로그인 해주세요.",
+        "go_home": "홈으로 돌아가기"
     },
     "Footer": {
         "email": "이메일",

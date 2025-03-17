@@ -113,9 +113,11 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">{t('future_title')}</h2>
           <p className="text-lg text-gray-300 mb-10 max-w-3xl mx-auto">{t('future_description')}</p>
-          <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-lg px-8 py-6 h-auto rounded-full shadow-lg shadow-purple-900/50 transition-transform hover:scale-105">
-            {t('start_button')}
-          </Button>
+          <I18nLink href="/user">
+            <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-lg px-8 py-6 h-auto rounded-full shadow-lg shadow-purple-900/50 transition-transform hover:scale-105">
+              {t('start_button')}
+            </Button>
+          </I18nLink>
         </div>
       </section>
     </main>
