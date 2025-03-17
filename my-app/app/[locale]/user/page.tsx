@@ -20,7 +20,6 @@ interface AuthResult {
 interface UserData {
     id: string;
     username: string;
-    pi_uid: string;
     points: number;
     last_login_date: string;
 }

@@ -53,7 +53,7 @@ export async function POST(request: Request) {
                     const { data: userData, error } = await supabase
                         .from('users')
                         .select('*')
-                        .eq('pi_uid', authResult.user.uid)
+                        .eq('id', authResult.user.uid)
                         .single();
 
                     const now = new Date().toISOString();
@@ -74,9 +74,8 @@ export async function POST(request: Request) {
                         console.log('신규 사용자 생성:', authResult.user);
 
                         const newUser = {
-                            id: crypto.randomUUID(),
+                            id: authResult.user.uid, // Pi Network UID를 직접 id 필드에 저장
                             username: authResult.user.username,
-                            pi_uid: authResult.user.uid,
                             created_at: now,
                             is_admin: false,
                             points: 1, // 신규 가입 보상
@@ -120,7 +119,7 @@ export async function POST(request: Request) {
                     const { data: userData, error: fetchError } = await supabase
                         .from('users')
                         .select('*')
-                        .eq('pi_uid', userId)
+                        .eq('id', userId)
                         .single();
 
                     if (fetchError) {
@@ -134,7 +133,7 @@ export async function POST(request: Request) {
                             last_login_date: now,
                             points: (userData.points || 0) + 1
                         })
-                        .eq('pi_uid', userId);
+                        .eq('id', userId);
 
                     if (updateError) {
                         return NextResponse.json({ error: '사용자 정보 업데이트에 실패했습니다.' }, { status: 500 });

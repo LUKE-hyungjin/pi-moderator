@@ -7,11 +7,6 @@ import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 
-// Leaflet 관련 타입
-type LatLng = {
-    lat: number;
-    lng: number;
-};
 
 // 마커 타입 정의
 type MarkerType = 'education' | 'relay' | 'tax';
@@ -216,6 +211,7 @@ export default function AddPlacePage() {
                 .from('markers')
                 .insert([
                     {
+                        id: crypto.randomUUID(),
                         name,
                         latitude: position[0],
                         longitude: position[1],
