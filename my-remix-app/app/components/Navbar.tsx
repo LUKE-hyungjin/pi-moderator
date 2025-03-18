@@ -210,6 +210,10 @@ export function Navbar() {
                             <Link to="/user" className={`py-2 ${isActivePath('/user')}`} onClick={() => setIsMenuOpen(false)}>
                                 {translateToString(t('nav.user'))}
                             </Link>
+                            <Link to="/chat" className={`py-2 ${isActivePath('/chat')}`} onClick={() => setIsMenuOpen(false)}>
+                                {translateToString(t('nav.chat'))}
+                            </Link>
+
 
 
                             {/* 로그인 상태 및 버튼 */}
