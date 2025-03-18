@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 
 
 // 마커 타입 정의
-type MarkerType = 'education' | 'relay' | 'tax';
+type MarkerType = 'education' | 'exchange' | 'tax';
 
 // Pi Network 인증 타입
 interface PiUser {
@@ -97,7 +97,7 @@ export default function AddPlacePage() {
             </div>
           </div>
         `;
-            case 'relay':
+            case 'exchange':
                 return `
           <div class="template-content">
             <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">중계소 정보</h3>
@@ -373,7 +373,7 @@ export default function AddPlacePage() {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="education">{typeT('education')}</option>
-                            <option value="relay">{typeT('relay')}</option>
+                            <option value="exchange">{typeT('exchange')}</option>
                             <option value="tax">{typeT('tax')}</option>
                         </select>
                         <p className="text-sm text-muted-foreground mt-1">

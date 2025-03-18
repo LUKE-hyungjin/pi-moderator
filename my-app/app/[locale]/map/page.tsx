@@ -15,13 +15,25 @@ const MapComponent = dynamic(() => import('@/components/MapComponent'), {
     )
 });
 
-// 마커 유형 정의
+// 마커 유형 정의 - Supabase 테이블과 동일하게 변경
 type MarkerType = 'all' | 'education' | 'exchange' | 'tax';
+
+// 마커 상세 정보 인터페이스
+interface MarkerDetail {
+    id: string;
+    title: string;
+    description: string;
+    address: string;
+    phone: string;
+    type: string;
+    image_url?: string;
+    rating: number;
+}
 
 export default function MapPage() {
     const t = useTranslations('Map');
     const [activeType, setActiveType] = useState<MarkerType>('all');
-    const [selectedMarker, setSelectedMarker] = useState<any>(null);
+    const [selectedMarker, setSelectedMarker] = useState<MarkerDetail | null>(null);
 
     // 필터 버튼 정의
     const filterButtons = [
@@ -31,7 +43,8 @@ export default function MapPage() {
         { id: 'tax', label: t('tax'), activeClass: 'bg-green-600 hover:bg-green-500 text-white', inactiveClass: 'border-green-600 dark:text-green-400 text-green-700' },
     ];
 
-    const handleMarkerClick = (marker: any) => {
+    // 마커 클릭 핸들러
+    const handleMarkerClick = (marker: MarkerDetail) => {
         setSelectedMarker(marker);
     };
 
@@ -68,13 +81,40 @@ export default function MapPage() {
                     {selectedMarker ? (
                         <div>
                             <h2 className="text-xl font-bold mb-4">{selectedMarker.title}</h2>
-                            <p className="text-gray-400 mb-3">{selectedMarker.description}</p>
-                            <div className="flex items-center text-gray-500 text-sm mb-1">
+                            {selectedMarker.image_url && (
+                                <div className="mb-4">
+                                    <img
+                                        src={selectedMarker.image_url}
+                                        alt={selectedMarker.title}
+                                        className="w-full h-40 object-cover rounded-md"
+                                    />
+                                </div>
+                            )}
+                            <div className="flex items-center mb-3">
+                                <span className="text-sm bg-gray-700 text-white px-2 py-1 rounded-full">
+                                    {selectedMarker.type === 'education' ? t('education') :
+                                        selectedMarker.type === 'exchange' ? t('exchange') :
+                                            selectedMarker.type === 'tax' ? t('tax') : selectedMarker.type}
+                                </span>
+                                {selectedMarker.rating > 0 && (
+                                    <div className="ml-2 flex items-center">
+                                        <span className="text-yellow-400 mr-1">★</span>
+                                        <span className="text-sm">{selectedMarker.rating.toFixed(1)}</span>
+                                    </div>
+                                )}
+                            </div>
+                            <div
+                                className="text-gray-300 mb-4 description"
+                                dangerouslySetInnerHTML={{ __html: selectedMarker.description }}
+                            />
+                            <div className="flex items-center text-gray-400 text-sm mb-2">
                                 <span className="mr-2">📍</span> {selectedMarker.address}
                             </div>
-                            <div className="flex items-center text-gray-500 text-sm">
-                                <span className="mr-2">📞</span> {selectedMarker.phone}
-                            </div>
+                            {selectedMarker.phone && (
+                                <div className="flex items-center text-gray-400 text-sm">
+                                    <span className="mr-2">📞</span> {selectedMarker.phone}
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="h-full flex items-center justify-center text-gray-500">
@@ -83,6 +123,17 @@ export default function MapPage() {
                     )}
                 </div>
             </div>
+
+            <style jsx>{`
+                .description {
+                    max-height: 200px;
+                    overflow-y: auto;
+                }
+                .description img {
+                    max-width: 100%;
+                    height: auto;
+                }
+            `}</style>
         </div>
     );
 } 
