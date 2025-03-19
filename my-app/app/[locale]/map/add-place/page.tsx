@@ -33,10 +33,10 @@ const SaveMapComponent = dynamic(() => import('@/components/SaveMapComponent'), 
 });
 
 // SuneditorComponent를 클라이언트 사이드에서만 렌더링하기 위한 동적 임포트
-const SuneditorComponent = dynamic(() => import('@/components/SuneditorComponent'), {
+const SuneditorComponent = dynamic(() => import('@/components/SuneditorComponent').then(mod => mod.default), {
     ssr: false,
     loading: () => (
-        <div className="h-[400px] bg-zinc-900/50 flex items-center justify-center">
+        <div className="h-[500px] bg-zinc-900/50 flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
         </div>
     )
@@ -454,10 +454,13 @@ export default function AddPlacePage() {
                         </label>
                         <div className="h-[500px] bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
                             <SuneditorComponent
-                                setContents={description}
+                                defaultValue={description}
                                 onChange={(value) => setDescription(value)}
                                 height="500px"
                                 placeholder={t('place.form.description_placeholder')}
+                                onError={() => {
+                                    console.error('에디터 로드 실패');
+                                }}
                             />
                         </div>
                         <input

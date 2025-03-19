@@ -144,9 +144,6 @@ export default function UserProfilePage() {
                             className="object-cover"
                             priority
                         />
-                        <div className="absolute bottom-0 right-0 bg-gradient-to-br from-violet-500 to-purple-500 text-white text-xl font-bold w-10 h-10 rounded-full flex items-center justify-center border-2 border-zinc-900 shadow-md">
-                            {auth.user.username.charAt(0).toUpperCase()}
-                        </div>
                     </div>
 
                     <div className="mb-8">
