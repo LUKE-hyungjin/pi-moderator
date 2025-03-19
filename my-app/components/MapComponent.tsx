@@ -149,14 +149,7 @@ export default function MapComponent({ activeType, onMarkerClick }: MapComponent
                         eventHandlers={{
                             click: () => handleMarkerClick(marker),
                         }}
-                    >
-                        <Popup>
-                            <div>
-                                <h3 className="font-bold">{marker.name}</h3>
-                                <p className="text-sm">{marker.type}</p>
-                            </div>
-                        </Popup>
-                    </Marker>
+                    />
                 ))}
             </MapContainer>
         </>

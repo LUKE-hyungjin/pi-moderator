@@ -70,14 +70,15 @@
                 "name": "Place Name",
                 "name_placeholder": "Enter the name of the place",
                 "address": "Address",
-                "address_placeholder": "Select a location on the map or enter the address",
+                "address_placeholder": "Select a location on the map",
                 "phone": "Phone Number",
                 "phone_placeholder": "Enter the phone number (optional)",
                 "image": "Image",
                 "image_description": "Upload a representative image of the place",
+                "image_placeholder": "Select or drag an image file here",
+                "image_formats": "JPG, PNG files supported",
                 "type": "Place Type",
                 "type_placeholder": "Select Type",
-                "type_warning": "You cannot change the type after registration",
                 "description": "Description",
                 "description_placeholder": "Enter detailed information about the place",
                 "cancel": "Cancel",
@@ -85,7 +86,7 @@
             },
             "type": {
                 "education": "Education Center",
-                "relay": "Exchange Center",
+                "exchange": "Exchange Center",
                 "tax": "Tax Center"
             }
         }

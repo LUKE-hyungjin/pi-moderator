@@ -296,16 +296,6 @@ export default function AddPlacePage() {
                         <label htmlFor="address" className="block text-sm font-medium mb-1">
                             {t('place.form.address')}
                         </label>
-                        <input
-                            type="text"
-                            id="address"
-                            name="address"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                            required
-                            placeholder={t('place.form.address_placeholder')}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
                     </div>
 
                     {/* 지도 */}
@@ -315,6 +305,16 @@ export default function AddPlacePage() {
                             onPositionSelect={handleMapClick}
                         />
                     </div>
+                    <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        required
+                        placeholder={t('place.form.address_placeholder')}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
                     {/* 위도/경도 hidden 필드 */}
                     <input type="hidden" name="latitude" value={position[0]} />
@@ -341,44 +341,110 @@ export default function AddPlacePage() {
                         <label htmlFor="image" className="block text-sm font-medium mb-1">
                             {t('place.form.image')}
                         </label>
-                        <input
-                            id="image"
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                    setImageFile(file);
-                                }
-                            }}
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                        />
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <div className="relative w-full border-2 border-dashed border-blue-400 dark:border-blue-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150">
+                            <input
+                                id="image"
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        setImageFile(file);
+                                    }
+                                }}
+                                required
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            />
+                            <div className="flex flex-col items-center justify-center text-center">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-10 w-10 text-blue-500 dark:text-blue-400 mb-2"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                </svg>
+                                <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">
+                                    {imageFile ? imageFile.name : t('place.form.image_placeholder')}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    {t('place.form.image_formats')}
+                                </p>
+                            </div>
+                        </div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             {t('place.form.image_description')}
                         </p>
                     </div>
 
-                    {/* 장소 유형 선택 필드 */}
+                    {/*  필드 */}
                     <div>
-                        <label htmlFor="type" className="block text-sm font-medium mb-1">
+                        <label htmlFor="type" className="block text-sm font-medium mb-2">
                             {t('place.form.type')}
                         </label>
-                        <select
-                            id="type"
+                        <div className="grid grid-cols-3 gap-3">
+                            <div
+                                className={`flex flex-col items-center p-3 rounded-lg border-2 cursor-pointer transition-colors duration-150 ${type === 'education'
+                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-400'
+                                    : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                    }`}
+                                onClick={() => handleTypeChange('education')}
+                            >
+                                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                </div>
+                                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                    {typeT('education')}
+                                </span>
+                            </div>
+
+                            <div
+                                className={`flex flex-col items-center p-3 rounded-lg border-2 cursor-pointer transition-colors duration-150 ${type === 'exchange'
+                                    ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/30 dark:border-pink-400'
+                                    : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                    }`}
+                                onClick={() => handleTypeChange('exchange')}
+                            >
+                                <div className="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900 flex items-center justify-center mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-pink-600 dark:text-pink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                    </svg>
+                                </div>
+                                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                    {typeT('exchange')}
+                                </span>
+                            </div>
+
+                            <div
+                                className={`flex flex-col items-center p-3 rounded-lg border-2 cursor-pointer transition-colors duration-150 ${type === 'tax'
+                                    ? 'border-green-500 bg-green-50 dark:bg-green-900/30 dark:border-green-400'
+                                    : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                    }`}
+                                onClick={() => handleTypeChange('tax')}
+                            >
+                                <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600 dark:text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                    {typeT('tax')}
+                                </span>
+                            </div>
+                        </div>
+                        <input
+                            type="hidden"
                             name="type"
                             value={type}
-                            onChange={(e) => handleTypeChange(e.target.value as MarkerType)}
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="education">{typeT('education')}</option>
-                            <option value="exchange">{typeT('exchange')}</option>
-                            <option value="tax">{typeT('tax')}</option>
-                        </select>
-                        <p className="text-sm text-muted-foreground mt-1">
-                            {t('place.form.type_warning')}
-                        </p>
+                        />
                     </div>
 
                     {/* 장소 설명 입력 필드 */}
@@ -386,11 +452,12 @@ export default function AddPlacePage() {
                         <label htmlFor="description" className="block text-sm font-medium mb-1">
                             {t('place.form.description')}
                         </label>
-                        <div className="h-[500px] bg-white rounded-lg overflow-hidden">
+                        <div className="h-[500px] bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
                             <SuneditorComponent
                                 setContents={description}
                                 onChange={(value) => setDescription(value)}
                                 height="500px"
+                                placeholder={t('place.form.description_placeholder')}
                             />
                         </div>
                         <input

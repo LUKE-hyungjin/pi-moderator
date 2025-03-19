@@ -29,7 +29,7 @@ export default function LanguageSwitcher() {
                     <ChevronDown className="h-3.5 w-3.5 opacity-70" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-zinc-900 border border-zinc-700 text-white min-w-32 shadow-lg">
+            <DropdownMenuContent align="end" className="bg-zinc-900 border border-zinc-700 text-white min-w-32 shadow-lg z-150">
                 <DropdownMenuItem
                     onClick={() => handleLocaleChange('ko')}
                     className={`${locale === 'ko' ? 'bg-purple-500/20 text-purple-300' : 'hover:bg-white/10'} cursor-pointer transition-colors`}

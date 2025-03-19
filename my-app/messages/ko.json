@@ -70,14 +70,15 @@
                 "name": "장소 이름",
                 "name_placeholder": "장소의 이름을 입력하세요",
                 "address": "주소",
-                "address_placeholder": "지도에서 위치를 선택하거나 주소를 입력하세요",
+                "address_placeholder": "지도에서 위치를 선택하세요",
                 "phone": "전화번호",
                 "phone_placeholder": "전화번호를 입력하세요 (선택)",
                 "image": "이미지",
                 "image_description": "장소의 대표 이미지를 업로드하세요",
+                "image_placeholder": "이미지 파일을 선택하거나 드래그하세요",
+                "image_formats": "JPG, PNG 파일 지원",
                 "type": "장소 유형",
                 "type_placeholder": "유형 선택",
-                "type_warning": "등록 후에는 유형을 변경할 수 없습니다",
                 "description": "상세 설명",
                 "description_placeholder": "장소에 대한 상세 정보를 입력하세요",
                 "cancel": "취소",
@@ -85,7 +86,7 @@
             },
             "type": {
                 "education": "교육 센터",
-                "relay": "중개 센터",
+                "exchange": "중개 센터",
                 "tax": "세무 센터"
             }
         }
