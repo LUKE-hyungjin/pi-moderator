@@ -64,61 +64,6 @@ export default function SuneditorComponent({
 
     return (
         <>
-            <style jsx global>{`
-                .sun-editor {
-                    display: flex;
-                    flex-direction: column;
-                    height: 100%;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 0.375rem;
-                }
-                .sun-editor .se-container {
-                    display: flex;
-                    flex-direction: column;
-                    flex: 1 1 auto;
-                    height: 100%;
-                }
-                .sun-editor .se-wrapper {
-                    flex: 1 1 auto;
-                    position: relative;
-                    height: auto !important;
-                    min-height: 300px;
-                    overflow: visible !important;
-                }
-                .sun-editor .se-wrapper .se-wrapper-inner {
-                    position: absolute;
-                    inset: 0;
-                    overflow: visible !important;
-                }
-                /* 실제 콘텐츠 영역만 스크롤 가능하게 설정 */
-                .sun-editor .se-wrapper .se-wrapper-wysiwyg {
-                    overflow-y: auto !important;
-                    height: 100% !important;
-                }
-                .sun-editor .se-wrapper-code, 
-                .sun-editor .se-wrapper-source {
-                    overflow-y: auto !important;
-                    height: 100% !important;
-                }
-                .sun-editor-dark .se-btn-tray {
-                    background-color: #1e293b;
-                    border-color: #334155;
-                }
-                .sun-editor-dark .se-toolbar {
-                    background-color: #1e293b;
-                    border-color: #334155;
-                }
-                .sun-editor-dark .se-btn:hover {
-                    background-color: #334155;
-                }
-                .sun-editor-dark .se-wrapper {
-                    background-color: #0f172a;
-                    color: #e2e8f0;
-                }
-                .dark .sun-editor {
-                    border-color: #334155;
-                }
-            `}</style>
             <SunEditor
                 getSunEditorInstance={getSunEditorInstance}
                 setOptions={{

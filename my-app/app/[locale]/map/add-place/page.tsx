@@ -81,48 +81,42 @@ export default function AddPlacePage() {
     const getTemplateForType = (type: MarkerType): string => {
         switch (type) {
             case 'education':
-                return `
-          <div class="template-content">
-            <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">교육 시설 정보</h3>
-            <div class="info-section" style="margin-bottom: 1em;">
-              <p><strong>교육 유형:</strong> 예) 파이코인 교육, 블록체인 이론 등</p>
-              <p><strong>수용 인원:</strong> 예) 최대 20명</p>
-              <p><strong>커리큘럼:</strong></p>
-              <p><strong>강사진:</strong></p>
-              <p><strong>교육비:</strong></p>
-              <p><strong>교육 일정:</strong></p>
-            </div>
-            <div>
-              <p><strong>기타 사항:</strong></p>
-            </div>
-          </div>
-        `;
+                return `<div class="template-content">
+<h3 style="font-size: 1.3em; color: #2563eb; margin: 0 0 8px 0;">교육 시설 정보</h3>
+<div class="info-section" style="margin-bottom: 8px;">
+<p><strong>교육 유형:</strong> 예) 파이코인 교육, 블록체인 이론 등</p>
+<p><strong>수용 인원:</strong> 예) 최대 20명</p>
+<p><strong>커리큘럼:</strong></p>
+<p><strong>강사진:</strong></p>
+<p><strong>교육비:</strong></p>
+<p><strong>교육 일정:</strong></p>
+</div>
+<div>
+<p><strong>기타 사항:</strong></p>
+</div>
+</div>`;
             case 'exchange':
-                return `
-          <div class="template-content">
-            <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">중계소 정보</h3>
-            <div class="info-section" style="margin-bottom: 1em;">
-              <p><strong>중계 방식:</strong> 예) 직접 중계, 온라인 등</p>
-              <p><strong>운영 시간:</strong> 예) 평일 9시-18시</p>
-              <p><strong>서비스 지역:</strong></p>
-              <p><strong>수수료:</strong></p>
-              <p><strong>참고 사항:</strong></p>
-            </div>
-          </div>
-        `;
+                return `<div class="template-content">
+<h3 style="font-size: 1.3em; color: #2563eb; margin: 0 0 8px 0;">중계소 정보</h3>
+<div class="info-section" style="margin-bottom: 8px;">
+<p><strong>중계 방식:</strong> 예) 직접 중계, 온라인 등</p>
+<p><strong>운영 시간:</strong> 예) 평일 9시-18시</p>
+<p><strong>서비스 지역:</strong></p>
+<p><strong>수수료:</strong></p>
+<p><strong>참고 사항:</strong></p>
+</div>
+</div>`;
             case 'tax':
-                return `
-          <div class="template-content">
-            <h3 style="font-size: 1.5em; color: #2563eb; margin-bottom: 1em;">세무 상담소 정보</h3>
-            <div class="info-section" style="margin-bottom: 1em;">
-              <p><strong>제공 서비스:</strong> 예) 파이코인 세무 상담, 세금 신고 대행 등</p>
-              <p><strong>전문 분야:</strong></p>
-              <p><strong>상담 비용:</strong></p>
-              <p><strong>운영 시간:</strong></p>
-              <p><strong>자격증:</strong></p>
-            </div>
-          </div>
-        `;
+                return `<div class="template-content">
+<h3 style="font-size: 1.3em; color: #2563eb; margin: 0 0 8px 0;">세무 상담소 정보</h3>
+<div class="info-section" style="margin-bottom: 8px;">
+<p><strong>제공 서비스:</strong> 예) 파이코인 세무 상담, 세금 신고 대행 등</p>
+<p><strong>전문 분야:</strong></p>
+<p><strong>상담 비용:</strong></p>
+<p><strong>운영 시간:</strong></p>
+<p><strong>자격증:</strong></p>
+</div>
+</div>`;
         }
     };
 
@@ -452,11 +446,12 @@ export default function AddPlacePage() {
                         <label htmlFor="description" className="block text-sm font-medium mb-1">
                             {t('place.form.description')}
                         </label>
-                        <div className="h-[500px] bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+                        <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
                             <SuneditorComponent
-                                defaultValue={description}
+                                key={type}
+                                setContents={description}
                                 onChange={(value) => setDescription(value)}
-                                height="500px"
+                                height="100%"
                                 placeholder={t('place.form.description_placeholder')}
                                 onError={() => {
                                     console.error('에디터 로드 실패');
