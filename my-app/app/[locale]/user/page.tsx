@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useRouter } from '@/i18n/routing';
@@ -103,19 +104,23 @@ export default function UserProfilePage() {
         return (
             <div className="container mx-auto px-4 py-16">
                 <div className="max-w-md mx-auto bg-zinc-900 rounded-lg overflow-hidden shadow-lg p-8 text-center">
-                    <Avatar className="mx-auto h-20 w-20 mb-6">
-                        <AvatarFallback className="bg-gradient-to-br from-purple-600 to-pink-600 text-white text-2xl">
-                            π
-                        </AvatarFallback>
-                    </Avatar>
-                    <h1 className="text-2xl font-bold mb-4">{t('auth_required')}</h1>
+                    <div className="relative w-24 h-24 mx-auto mb-6 rounded-full overflow-hidden border-4 border-purple-500 shadow-lg shadow-purple-500/30 transition-transform hover:scale-105 duration-300">
+                        <Image
+                            src="/images/picoin_logo.png"
+                            alt="Pi Coin Logo"
+                            fill
+                            className="object-cover"
+                            priority
+                        />
+                    </div>
+                    <h1 className="text-white text-2xl font-bold mb-4">{t('auth_required')}</h1>
                     <p className="text-gray-400 mb-8">
                         {t('auth_message')}<br />
                         {t('pi_browser_required')}
                     </p>
                     <Button
                         onClick={() => router.push('/')}
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 w-full rounded-full"
+                        className="bg-gradient-to-r text-white from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 w-full rounded-full"
                     >
                         {t('go_home')}
                     </Button>
@@ -131,11 +136,18 @@ export default function UserProfilePage() {
 
             <div className="max-w-md mx-auto bg-zinc-900 rounded-lg overflow-hidden shadow-lg">
                 <div className="p-8 text-center">
-                    <Avatar className="mx-auto h-24 w-24 mb-6">
-                        <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-500 text-white text-2xl">
+                    <div className="relative w-28 h-28 mx-auto mb-6 rounded-full overflow-hidden border-4 border-purple-500 shadow-lg shadow-purple-500/30 transition-transform hover:scale-105 duration-300">
+                        <Image
+                            src="/images/picoin_logo.png"
+                            alt={`${auth.user.username}'s profile`}
+                            fill
+                            className="object-cover"
+                            priority
+                        />
+                        <div className="absolute bottom-0 right-0 bg-gradient-to-br from-violet-500 to-purple-500 text-white text-xl font-bold w-10 h-10 rounded-full flex items-center justify-center border-2 border-zinc-900 shadow-md">
                             {auth.user.username.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                    </Avatar>
+                        </div>
+                    </div>
 
                     <div className="mb-8">
                         <h2 className="text-gray-400 text-lg mb-2">{t('username')}</h2>

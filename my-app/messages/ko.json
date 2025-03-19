@@ -27,7 +27,8 @@
         "login_required": "로그인이 필요합니다",
         "auth": "Pi Network 인증",
         "logout": "로그아웃",
-        "user": "내 정보"
+        "user": "내 정보",
+        "menu": "메뉴"
     },
     "Map": {
         "title": "파이코인 지도",

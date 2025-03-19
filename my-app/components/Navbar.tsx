@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Link as I18nLink } from '@/i18n/routing';
@@ -204,11 +205,15 @@ export default function Navbar() {
                     <div className="flex items-center gap-6">
                         {/* 로고 */}
                         <Link href="/" className="flex items-center gap-3 group">
-                            <Avatar className="w-9 h-9 border-2 border-purple-500 transition-transform group-hover:scale-110">
-                                <AvatarFallback className="bg-gradient-to-br from-purple-600 to-pink-600 text-white text-xl font-bold">
-                                    π
-                                </AvatarFallback>
-                            </Avatar>
+                            <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500 transition-transform group-hover:scale-110">
+                                <Image
+                                    src="/images/picoin_logo.png"
+                                    alt="Pi Coin Logo"
+                                    fill
+                                    className="object-cover"
+                                    priority
+                                />
+                            </div>
                             <span className="font-bold text-xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Pi-Moderator</span>
                         </Link>
 
@@ -250,12 +255,14 @@ export default function Navbar() {
                             ) : (
                                 <>
                                     <span className="dark:text-gray-400 text-gray-600 text-sm">{t('login_required')}</span>
-                                    <Button
-                                        onClick={authenticateUser}
-                                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-full"
-                                    >
-                                        {t('auth')} π
-                                    </Button>
+                                    <I18nLink href="/user">
+                                        <Button
+                                            onClick={authenticateUser}
+                                            className="bg-gradient-to-r text-white from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-full"
+                                        >
+                                            {t('auth')}
+                                        </Button>
+                                    </I18nLink>
                                 </>
                             )}
                         </div>
@@ -270,12 +277,9 @@ export default function Navbar() {
                                         <Menu className="h-6 w-6" />
                                     </Button>
                                 </SheetTrigger>
-                                <SheetContent side="right" className="bg-zinc-900/98 text-white border-l border-white/10 shadow-xl">
+                                <SheetContent side="right" className="bg-zinc-900/98 text-white border-l border-white/10 shadow-xl z-150">
                                     <SheetHeader>
-                                        <SheetTitle className="text-white text-xl">메뉴</SheetTitle>
-                                        <SheetDescription className="text-gray-400">
-                                            사이트 내비게이션
-                                        </SheetDescription>
+                                        <SheetTitle className="text-white text-xl">{t('menu')}</SheetTitle>
                                     </SheetHeader>
                                     <div className="flex flex-col gap-8 mt-10 text-center">
                                         {navLinks.map((link) => (
@@ -307,15 +311,17 @@ export default function Navbar() {
                                         ) : (
                                             <>
                                                 <span className="text-gray-400 text-sm">{t('login_required')}</span>
-                                                <Button
-                                                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 w-full rounded-full"
-                                                    onClick={() => {
-                                                        authenticateUser();
-                                                        setIsOpen(false);
-                                                    }}
-                                                >
-                                                    {t('auth')} π
-                                                </Button>
+                                                <I18nLink href="/user">
+                                                    <Button
+                                                        className="text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 w-full rounded-full"
+                                                        onClick={() => {
+                                                            authenticateUser();
+                                                            setIsOpen(false);
+                                                        }}
+                                                    >
+                                                        {t('auth')}
+                                                    </Button>
+                                                </I18nLink>
                                             </>
                                         )}
                                     </div>

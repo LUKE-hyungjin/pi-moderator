@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -29,12 +29,38 @@ interface MapComponentProps {
     onMarkerClick: (marker: any) => void;
 }
 
+// 맵 리사이즈 핸들러 컴포넌트
+function MapResizeHandler() {
+    const map = useMap();
+
+    useEffect(() => {
+        // 맵이 로드된 후 resize 이벤트를 강제로 트리거
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 100);
+
+        // 창 크기 변경 시 맵 크기 업데이트
+        const handleResize = () => {
+            map.invalidateSize();
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [map]);
+
+    return null;
+}
+
 export default function MapComponent({ activeType, onMarkerClick }: MapComponentProps) {
     const [markers, setMarkers] = useState<MarkerData[]>([]);
     const [filteredMarkers, setFilteredMarkers] = useState<MarkerData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const supabase = createClient();
+    const mapContainerRef = useRef<HTMLDivElement>(null);
 
     // 마커 아이콘 문제 해결을 위한 재설정
     useEffect(() => {
@@ -122,36 +148,67 @@ export default function MapComponent({ activeType, onMarkerClick }: MapComponent
         });
     };
 
+    // 맵 컨테이너가 표시될 때 Leaflet 맵 크기 재계산을 위한 효과 추가
+    useEffect(() => {
+        if (mapContainerRef.current) {
+            const resizeObserver = new ResizeObserver(() => {
+                // ResizeObserver를 통해 컨테이너 크기 변경 감지
+                if (document.querySelector('.leaflet-container')) {
+                    // leaflet-container가 존재할 경우 이벤트 발생
+                    window.dispatchEvent(new Event('resize'));
+                }
+            });
+
+            resizeObserver.observe(mapContainerRef.current);
+
+            return () => {
+                if (mapContainerRef.current) {
+                    resizeObserver.unobserve(mapContainerRef.current);
+                }
+            };
+        }
+    }, []);
+
     return (
         <>
             <style jsx global>{`
         .leaflet-container {
-          height: 500px;
+          height: 300px;
           width: 100%;
           z-index: 1;
+          display: block;
+        }
+        
+        @media (min-width: 640px) {
+          .leaflet-container {
+            height: 600px;
+          }
         }
       `}</style>
-            <MapContainer
-                center={[36.5, 127.5]} // 대한민국 중심
-                zoom={7}
-                scrollWheelZoom={true}
-                style={{ height: '500px', width: '100%' }}
-            >
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {filteredMarkers.map(marker => (
-                    <Marker
-                        key={marker.id}
-                        position={[marker.latitude, marker.longitude]}
-                        icon={getMarkerIcon(marker.type)}
-                        eventHandlers={{
-                            click: () => handleMarkerClick(marker),
-                        }}
+            <div ref={mapContainerRef} className="map-wrapper w-full h-[300px] sm:h-[600px]">
+                <MapContainer
+                    center={[36.5, 127.5]} // 대한민국 중심
+                    zoom={7}
+                    scrollWheelZoom={true}
+                    style={{ height: '100%', width: '100%' }}
+                >
+                    <MapResizeHandler />
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                ))}
-            </MapContainer>
+                    {filteredMarkers.map(marker => (
+                        <Marker
+                            key={marker.id}
+                            position={[marker.latitude, marker.longitude]}
+                            icon={getMarkerIcon(marker.type)}
+                            eventHandlers={{
+                                click: () => handleMarkerClick(marker),
+                            }}
+                        />
+                    ))}
+                </MapContainer>
+            </div>
         </>
     );
 } 

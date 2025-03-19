@@ -27,7 +27,8 @@
         "login_required": "Login required",
         "auth": "Pi Network Auth",
         "logout": "Logout",
-        "user": "My Profile"
+        "user": "My Profile",
+        "menu": "Menu"
     },
     "Map": {
         "title": "Pi Coin Map",

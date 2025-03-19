@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 const MapComponent = dynamic(() => import('@/components/MapComponent'), {
     ssr: false,
     loading: () => (
-        <div className="w-full h-[500px] bg-zinc-900/50 flex items-center justify-center">
+        <div className="w-full h-[300px] sm:h-[500px] bg-gray-200 dark:bg-zinc-900/50 flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
         </div>
     )
@@ -69,7 +69,7 @@ export default function MapPage() {
             {/* 지도와 정보 패널 */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* 지도 영역 */}
-                <div className="lg:col-span-2 bg-zinc-900 rounded-lg overflow-hidden shadow-lg border border-zinc-800">
+                <div className="lg:col-span-2 bg-white dark:bg-zinc-900 rounded-lg overflow-hidden shadow-lg border border-gray-200 dark:border-zinc-800">
                     <MapComponent
                         activeType={activeType}
                         onMarkerClick={handleMarkerClick}
@@ -77,47 +77,55 @@ export default function MapPage() {
                 </div>
 
                 {/* 정보 패널 */}
-                <div className="bg-zinc-900 rounded-lg overflow-hidden shadow-lg border border-zinc-800 p-6">
+                <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-800 p-6 h-[400px] sm:h-[600px] flex flex-col relative">
                     {selectedMarker ? (
-                        <div>
-                            <h2 className="text-xl font-bold mb-4">{selectedMarker.title}</h2>
+                        <div className="h-full flex flex-col overflow-hidden">
+                            <h2 className="text-xl font-bold mb-2 sm:mb-4 text-gray-900 dark:text-white">{selectedMarker.title}</h2>
                             {selectedMarker.image_url && (
-                                <div className="mb-4">
+                                <div className="mb-2 sm:mb-4 flex-shrink-0">
                                     <img
                                         src={selectedMarker.image_url}
                                         alt={selectedMarker.title}
-                                        className="w-full h-40 object-cover rounded-md"
+                                        className="w-full h-32 sm:h-48 object-cover rounded-md"
                                     />
                                 </div>
                             )}
-                            <div className="flex items-center mb-3">
-                                <span className="text-sm bg-gray-700 text-white px-2 py-1 rounded-full">
+                            <div className="flex items-center mb-3 flex-shrink-0">
+                                <span className={`text-sm px-2 py-1 rounded-full ${selectedMarker.type === 'education' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' :
+                                    selectedMarker.type === 'exchange' ? 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300' :
+                                        selectedMarker.type === 'tax' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                                            'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                                    }`}>
                                     {selectedMarker.type === 'education' ? t('education') :
                                         selectedMarker.type === 'exchange' ? t('exchange') :
                                             selectedMarker.type === 'tax' ? t('tax') : selectedMarker.type}
                                 </span>
                                 {selectedMarker.rating > 0 && (
                                     <div className="ml-2 flex items-center">
-                                        <span className="text-yellow-400 mr-1">★</span>
-                                        <span className="text-sm">{selectedMarker.rating.toFixed(1)}</span>
+                                        <span className="text-yellow-500 mr-1">★</span>
+                                        <span className="text-sm text-gray-700 dark:text-gray-300">{selectedMarker.rating.toFixed(1)}</span>
                                     </div>
                                 )}
                             </div>
-                            <div
-                                className="text-gray-300 mb-4 description"
-                                dangerouslySetInnerHTML={{ __html: selectedMarker.description }}
-                            />
-                            <div className="flex items-center text-gray-400 text-sm mb-2">
-                                <span className="mr-2">📍</span> {selectedMarker.address}
+                            <div className="overflow-y-auto flex-grow mb-4">
+                                <div
+                                    className="text-gray-700 dark:text-gray-300 description"
+                                    dangerouslySetInnerHTML={{ __html: selectedMarker.description }}
+                                />
                             </div>
-                            {selectedMarker.phone && (
-                                <div className="flex items-center text-gray-400 text-sm">
-                                    <span className="mr-2">📞</span> {selectedMarker.phone}
+                            <div className="flex-shrink-0">
+                                <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm mb-2">
+                                    <span className="mr-2">📍</span> {selectedMarker.address}
                                 </div>
-                            )}
+                                {selectedMarker.phone && (
+                                    <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                                        <span className="mr-2">📞</span> {selectedMarker.phone}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     ) : (
-                        <div className="h-full flex items-center justify-center text-gray-500">
+                        <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
                             {t('select_marker')}
                         </div>
                     )}
@@ -126,12 +134,31 @@ export default function MapPage() {
 
             <style jsx>{`
                 .description {
-                    max-height: 200px;
                     overflow-y: auto;
                 }
                 .description img {
                     max-width: 100%;
                     height: auto;
+                }
+                .description table {
+                    border-collapse: collapse;
+                    width: 100%;
+                    margin-bottom: 1rem;
+                }
+                .description table td, 
+                .description table th {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                }
+                .description ul, .description ol {
+                    padding-left: 1.5rem;
+                    margin-bottom: 1rem;
+                }
+                .description ul li {
+                    list-style-type: disc;
+                }
+                .description ol li {
+                    list-style-type: decimal;
                 }
             `}</style>
         </div>
