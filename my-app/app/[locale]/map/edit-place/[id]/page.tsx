@@ -13,6 +13,16 @@ const SaveMapComponent = dynamic(() => import('@/components/SaveMapComponent'), 
     loading: () => <div className="h-[400px] bg-zinc-800 rounded-lg flex items-center justify-center">지도 로딩 중...</div>
 });
 
+// SuneditorComponent를 클라이언트 사이드에서만 렌더링하기 위한 동적 임포트
+const SuneditorComponent = dynamic(() => import('@/components/SuneditorComponent').then(mod => mod.default), {
+    ssr: false,
+    loading: () => (
+        <div className="h-[500px] bg-zinc-800 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+        </div>
+    )
+});
+
 // 마커 타입 정의
 type MarkerType = 'education' | 'exchange' | 'tax';
 
@@ -59,6 +69,8 @@ export default function EditPlacePage({ params }: { params: { id: string } }) {
     const [description, setDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState('');
+
+    const typeT = useTranslations('Map.place.type');
 
     // 인증 상태 확인 및 장소 데이터 로드
     useEffect(() => {
@@ -242,6 +254,52 @@ export default function EditPlacePage({ params }: { params: { id: string } }) {
         }
     };
 
+    // 장소 삭제 처리
+    const handleDelete = async () => {
+        if (!window.confirm(t('delete_confirm'))) return;
+
+        setIsSubmitting(true);
+        setFormError('');
+
+        try {
+            if (!placeData || !auth) {
+                router.push('/user');
+                return;
+            }
+
+            // 이미지 파일이 있다면 스토리지에서 삭제
+            if (placeData.image_url) {
+                // URL에서 파일 이름 추출
+                const fileName = placeData.image_url.split('/').pop();
+                if (fileName) {
+                    await supabase.storage
+                        .from('marker-images')
+                        .remove([fileName]);
+                }
+            }
+
+            // 마커 데이터 삭제
+            const { error } = await supabase
+                .from('markers')
+                .delete()
+                .eq('id', placeData.id);
+
+            if (error) {
+                console.error('장소 삭제 오류:', error);
+                setFormError('장소 삭제 중 오류가 발생했습니다.');
+                return;
+            }
+
+            // 삭제 성공 시 사용자 페이지로 이동
+            router.push('/user');
+        } catch (error) {
+            console.error('장소 삭제 오류:', error);
+            setFormError('장소 삭제 중 오류가 발생했습니다.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     // 로딩 중 UI
     if (!placeData) {
         return (
@@ -362,12 +420,56 @@ export default function EditPlacePage({ params }: { params: { id: string } }) {
                         {/* 장소 유형 - 읽기 전용 표시 */}
                         <div>
                             <label className="block text-sm font-medium mb-2 text-gray-200">
-                                {t('place.type')}
+                                {t('place.form.type')}
                             </label>
-                            <div className="bg-zinc-800 px-4 py-3 rounded-md border border-zinc-700 text-white">
-                                {type === 'education' && t('type_education')}
-                                {type === 'exchange' && t('type_exchange')}
-                                {type === 'tax' && t('type_tax')}
+                            <div className="grid grid-cols-3 gap-3">
+                                <div
+                                    className={`flex flex-col items-center p-3 rounded-lg border-2 cursor-not-allowed transition-colors duration-150 ${type === 'education'
+                                        ? 'border-blue-500 bg-blue-50/10 dark:bg-blue-900/30 dark:border-blue-400'
+                                        : 'border-gray-700 dark:border-gray-700 opacity-50'
+                                        }`}
+                                >
+                                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-sm font-medium text-gray-300">
+                                        {typeT('education')}
+                                    </span>
+                                </div>
+
+                                <div
+                                    className={`flex flex-col items-center p-3 rounded-lg border-2 cursor-not-allowed transition-colors duration-150 ${type === 'exchange'
+                                        ? 'border-pink-500 bg-pink-50/10 dark:bg-pink-900/30 dark:border-pink-400'
+                                        : 'border-gray-700 dark:border-gray-700 opacity-50'
+                                        }`}
+                                >
+                                    <div className="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900/50 flex items-center justify-center mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-pink-600 dark:text-pink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-sm font-medium text-gray-300">
+                                        {typeT('exchange')}
+                                    </span>
+                                </div>
+
+                                <div
+                                    className={`flex flex-col items-center p-3 rounded-lg border-2 cursor-not-allowed transition-colors duration-150 ${type === 'tax'
+                                        ? 'border-green-500 bg-green-50/10 dark:bg-green-900/30 dark:border-green-400'
+                                        : 'border-gray-700 dark:border-gray-700 opacity-50'
+                                        }`}
+                                >
+                                    <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600 dark:text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-sm font-medium text-gray-300">
+                                        {typeT('tax')}
+                                    </span>
+                                </div>
                             </div>
                             <p className="text-xs text-gray-400 mt-1">
                                 {t('type_warning')}
@@ -377,17 +479,24 @@ export default function EditPlacePage({ params }: { params: { id: string } }) {
                         {/* 장소 설명 입력 필드 */}
                         <div>
                             <label htmlFor="description" className="block text-sm font-medium mb-1 text-gray-200">
-                                {t('place.description')}
+                                {t('place.form.description')}
                             </label>
-                            <textarea
-                                id="description"
+                            <div className="bg-zinc-800 rounded-lg overflow-hidden">
+                                <SuneditorComponent
+                                    key={type}
+                                    setContents={description}
+                                    onChange={(value) => setDescription(value)}
+                                    height="100%"
+                                    placeholder={t('place.form.description_edit_placeholder')}
+                                    onError={() => {
+                                        console.error('에디터 로드 실패');
+                                    }}
+                                />
+                            </div>
+                            <input
+                                type="hidden"
                                 name="description"
                                 value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                required
-                                rows={8}
-                                placeholder={t('place.description_edit_placeholder')}
-                                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
                             />
                         </div>
 
@@ -399,6 +508,14 @@ export default function EditPlacePage({ params }: { params: { id: string } }) {
                                 className="bg-zinc-700 hover:bg-zinc-600 text-white px-8"
                             >
                                 {t('cancel')}
+                            </Button>
+                            <Button
+                                type="button"
+                                onClick={handleDelete}
+                                disabled={isSubmitting}
+                                className="bg-red-500 hover:bg-red-600 text-white px-8"
+                            >
+                                {t('delete')}
                             </Button>
                             <Button
                                 type="submit"

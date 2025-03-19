@@ -9,6 +9,9 @@ import { useRouter } from '@/i18n/routing';
 import { createClient } from '@/lib/supabase/client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
+import React from 'react';
 
 // Pi Network 인증 타입
 interface PiUser {
@@ -49,6 +52,10 @@ export default function UserProfilePage() {
     const [myPlaces, setMyPlaces] = useState<PlaceData[]>([]);
     const [isDesktop, setIsDesktop] = useState(false);
     const supabase = createClient();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredPlaces, setFilteredPlaces] = useState<PlaceData[]>([]);
+    const [profileHeight, setProfileHeight] = useState(0);
+    const profileRef = React.useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // 화면 크기 감지
@@ -63,6 +70,22 @@ export default function UserProfilePage() {
             window.removeEventListener('resize', checkIsDesktop);
         };
     }, []);
+
+    useEffect(() => {
+        // 프로필 컨테이너 높이 측정
+        if (profileRef.current && isDesktop) {
+            const resizeObserver = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    setProfileHeight(entry.contentRect.height);
+                }
+            });
+
+            resizeObserver.observe(profileRef.current);
+            return () => {
+                resizeObserver.disconnect();
+            };
+        }
+    }, [isDesktop, auth]);
 
     useEffect(() => {
         // Pi Browser 확인
@@ -172,6 +195,26 @@ export default function UserProfilePage() {
         }
     };
 
+    // 검색어에 따라 장소 필터링
+    useEffect(() => {
+        if (!searchTerm.trim()) {
+            setFilteredPlaces(myPlaces);
+            return;
+        }
+
+        const lowerCaseSearchTerm = searchTerm.toLowerCase();
+        const filtered = myPlaces.filter(place =>
+            place.name.toLowerCase().includes(lowerCaseSearchTerm) ||
+            place.address.toLowerCase().includes(lowerCaseSearchTerm)
+        );
+
+        setFilteredPlaces(filtered);
+    }, [searchTerm, myPlaces]);
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+    };
+
     // 로딩 중 상태
     if (isLoading) {
         return (
@@ -216,9 +259,9 @@ export default function UserProfilePage() {
         <div className="container mx-auto px-4 py-16">
             <h1 className="text-4xl font-bold mb-12 text-center">{t('title')}</h1>
 
-            <div className={`${isDesktop ? 'grid grid-cols-1 lg:grid-cols-3 gap-8' : ''}`}>
+            <div className={`${isDesktop ? 'grid grid-cols-1 lg:grid-cols-3 gap-8' : ''}`} style={{ minHeight: '600px' }}>
                 <div className={`${isDesktop ? 'lg:col-span-1' : ''}`}>
-                    <div className="max-w-md mx-auto bg-zinc-900 rounded-lg overflow-hidden shadow-lg mb-8">
+                    <div ref={profileRef} className="max-w-md mx-auto bg-zinc-900 rounded-lg overflow-hidden shadow-lg mb-8 lg:mb-0">
                         <div className="p-8 text-center">
                             <div className="relative w-28 h-28 mx-auto mb-6 rounded-full overflow-hidden border-4 border-purple-500 shadow-lg shadow-purple-500/30 transition-transform hover:scale-105 duration-300">
                                 <Image
@@ -256,24 +299,38 @@ export default function UserProfilePage() {
                 </div>
 
                 <div className={`${isDesktop ? 'lg:col-span-2' : ''}`}>
-                    <div className="bg-zinc-900 rounded-lg overflow-hidden shadow-lg">
-                        <div className="p-6">
-                            <h2 className="text-2xl font-bold mb-6 text-white">{t('my_places')}</h2>
+                    <div className="bg-zinc-900 rounded-lg overflow-hidden shadow-lg" style={isDesktop ? { height: '600px' } : {}}>
+                        <div className="p-6 flex flex-col h-full">
+                            <div className="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center mb-6">
+                                <h2 className="text-2xl font-bold text-white">{t('my_places')}</h2>
+                                <div className="relative w-full sm:w-64">
+                                    <div className="relative rounded-full overflow-hidden">
+                                        <Input
+                                            type="text"
+                                            placeholder={t('search_places')}
+                                            value={searchTerm}
+                                            onChange={handleSearchChange}
+                                            className="w-full pl-10 pr-4 py-2 bg-zinc-800 border-zinc-700 text-white placeholder-gray-400 rounded-full"
+                                        />
+                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                    </div>
+                                </div>
+                            </div>
 
                             {myPlaces.length === 0 ? (
-                                <div className="text-center py-12">
+                                <div className="text-center py-12 flex-grow flex flex-col justify-center">
                                     <p className="text-gray-400 mb-6">{t('no_places')}</p>
                                     <Button
                                         onClick={() => router.push('/map/add-place')}
-                                        className="bg-purple-500 hover:bg-purple-600 rounded-lg"
+                                        className="bg-purple-500 hover:bg-purple-600 rounded-lg mx-auto"
                                     >
                                         {mapT('add_place')}
                                     </Button>
                                 </div>
                             ) : (
-                                <div className="overflow-x-auto">
+                                <div className="overflow-auto" style={{ height: 'calc(100% - 70px)' }}>
                                     <Table>
-                                        <TableHeader>
+                                        <TableHeader className="sticky top-0 bg-zinc-900 z-10">
                                             <TableRow>
                                                 <TableHead>{t('place_name')}</TableHead>
                                                 <TableHead className="hidden md:table-cell">{t('place_type')}</TableHead>
@@ -282,7 +339,7 @@ export default function UserProfilePage() {
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {myPlaces.map((place) => (
+                                            {filteredPlaces.map((place) => (
                                                 <TableRow key={place.id}>
                                                     <TableCell className="font-medium">{place.name}</TableCell>
                                                     <TableCell className="hidden md:table-cell">

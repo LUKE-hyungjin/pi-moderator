@@ -54,12 +54,12 @@
         "type_exchange": "중개 센터",
         "type_tax": "세무 센터",
         "type_warning": "등록 후에는 유형을 변경할 수 없습니다",
-        "description": "상세 설명",
-        "description_edit_placeholder": "장소에 대한 상세 정보를 입력하세요",
         "cancel": "취소",
         "submit": "등록하기",
         "submitting": "등록 중...",
         "save": "저장하기",
+        "delete": "삭제",
+        "delete_confirm": "정말로 이 장소를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
         "login_required": "로그인이 필요합니다",
         "image_required": "이미지를 업로드해주세요",
         "upload_error": "이미지 업로드 중 오류가 발생했습니다",
@@ -110,7 +110,8 @@
         "place_type": "유형",
         "place_address": "주소",
         "place_action": "작업",
-        "edit_place": "수정"
+        "edit_place": "수정",
+        "search_places": "장소 검색..."
     },
     "Footer": {
         "email": "이메일",

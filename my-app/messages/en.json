@@ -54,12 +54,12 @@
         "type_exchange": "Exchange Center",
         "type_tax": "Tax Center",
         "type_warning": "You cannot change the type after registration",
-        "description": "Description",
-        "description_edit_placeholder": "Enter detailed information about the place",
         "cancel": "Cancel",
         "submit": "Register",
         "submitting": "Submitting...",
         "save": "Save",
+        "delete": "Delete",
+        "delete_confirm": "Are you sure you want to delete this place? This action cannot be undone.",
         "login_required": "Login required",
         "image_required": "Please upload an image",
         "upload_error": "Error uploading image",
@@ -110,7 +110,8 @@
         "place_type": "Type",
         "place_address": "Address",
         "place_action": "Action",
-        "edit_place": "Edit"
+        "edit_place": "Edit",
+        "search_places": "Search places..."
     },
     "Footer": {
         "email": "Email",

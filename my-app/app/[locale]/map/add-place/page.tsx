@@ -439,6 +439,9 @@ export default function AddPlacePage() {
                             name="type"
                             value={type}
                         />
+                        <p className="text-xs text-gray-400 mt-1">
+                            {t('type_warning')}
+                        </p>
                     </div>
 
                     {/* 장소 설명 입력 필드 */}
