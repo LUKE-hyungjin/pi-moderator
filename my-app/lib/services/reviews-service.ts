@@ -61,27 +61,37 @@ export async function createReview(review: InsertReview): Promise<Review> {
 }
 
 // 리뷰 업데이트
-export async function updateReview(id: string, review: UpdateReview): Promise<Review> {
+export async function updateReview(id: string, content: string, rating: number): Promise<void> {
     const supabase = createClient();
 
-    const { data, error } = await supabase
+    // 먼저 리뷰를 가져와서 마커 ID 확인
+    const { data: existingReview, error: fetchError } = await supabase
         .from('reviews')
-        .update(review)
+        .select('marker_id')
         .eq('id', id)
-        .select()
         .single();
 
+    if (fetchError) {
+        console.error(`리뷰 ID ${id} 조회 오류:`, fetchError);
+        throw new Error('리뷰를 가져오는 중 오류가 발생했습니다.');
+    }
+
+    // 리뷰 수정
+    const { error } = await supabase
+        .from('reviews')
+        .update({
+            content,
+            rating
+        })
+        .eq('id', id);
+
     if (error) {
-        console.error(`리뷰 ID ${id} 업데이트 오류:`, error);
-        throw new Error('리뷰를 업데이트하는 중 오류가 발생했습니다.');
+        console.error(`리뷰 ID ${id} 수정 오류:`, error);
+        throw new Error('리뷰를 수정하는 중 오류가 발생했습니다.');
     }
 
-    // 리뷰가 업데이트되면 마커의 평균 평점을 업데이트
-    if (data) {
-        await updateMarkerRating(data.marker_id);
-    }
-
-    return data;
+    // 리뷰가 수정되면 마커의 평균 평점을 업데이트
+    await updateMarkerRating(existingReview.marker_id);
 }
 
 // 리뷰 삭제

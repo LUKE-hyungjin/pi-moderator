@@ -49,7 +49,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 }
 
-// PATCH: 리뷰 업데이트
+// PATCH: 리뷰 수정
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // params를 비구조화 할당하기 전 await 사용
     const routeParams = await Promise.resolve(params);
@@ -57,9 +57,23 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     try {
         const supabase = createApiClient();
+        const body = await request.json();
 
-        // JSON 데이터 파싱
-        const reviewData: UpdateReview = await request.json();
+        const { content, rating } = body;
+
+        if (!content || typeof content !== 'string') {
+            return NextResponse.json(
+                { error: '리뷰 내용은 필수입니다.' },
+                { status: 400 }
+            );
+        }
+
+        if (!rating || typeof rating !== 'number' || rating < 1 || rating > 5) {
+            return NextResponse.json(
+                { error: '유효한 평점(1-5)이 필요합니다.' },
+                { status: 400 }
+            );
+        }
 
         // 먼저 리뷰를 가져와서 마커 ID 확인
         const { data: existingReview, error: fetchError } = await supabase
@@ -83,29 +97,34 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             );
         }
 
-        const { data, error } = await supabase
+        // 리뷰 수정
+        const { error } = await supabase
             .from('reviews')
-            .update(reviewData)
-            .eq('id', id)
-            .select()
-            .single();
+            .update({
+                content,
+                rating
+            })
+            .eq('id', id);
 
         if (error) {
-            console.error(`리뷰 ID ${id} 업데이트 오류:`, error);
+            console.error(`리뷰 ID ${id} 수정 오류:`, error);
             return NextResponse.json(
-                { error: '리뷰를 업데이트하는 중 오류가 발생했습니다.' },
+                { error: '리뷰를 수정하는 중 오류가 발생했습니다.' },
                 { status: 500 }
             );
         }
 
-        // 리뷰가 업데이트되면 마커의 평균 평점을 업데이트
+        // 리뷰가 수정되면 마커의 평균 평점을 업데이트
         await updateMarkerRating(existingReview.marker_id);
 
-        return NextResponse.json(data);
-    } catch (error) {
-        console.error(`리뷰 ID ${id} 업데이트 처리 오류:`, error);
         return NextResponse.json(
-            { error: '리뷰를 업데이트하는 중 오류가 발생했습니다.' },
+            { message: '리뷰가 성공적으로 수정되었습니다.' },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.error(`리뷰 ID ${id} 수정 처리 오류:`, error);
+        return NextResponse.json(
+            { error: '리뷰를 수정하는 중 오류가 발생했습니다.' },
             { status: 500 }
         );
     }

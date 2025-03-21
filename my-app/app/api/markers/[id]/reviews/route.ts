@@ -69,6 +69,21 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
             );
         }
 
+        // 해당 사용자가 이미 이 마커에 리뷰를 작성했는지 확인
+        const { data: existingReview, error: checkError } = await supabase
+            .from('reviews')
+            .select('id')
+            .eq('marker_id', id)
+            .eq('user_id', reviewData.user_id)
+            .single();
+
+        if (!checkError && existingReview) {
+            return NextResponse.json(
+                { error: '이미 이 장소에 리뷰를 작성하셨습니다. 계정당 하나의 리뷰만 작성할 수 있습니다.' },
+                { status: 400 }
+            );
+        }
+
         const { data, error } = await supabase
             .from('reviews')
             .insert(reviewData)
