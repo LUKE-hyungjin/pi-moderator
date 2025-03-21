@@ -11,7 +11,9 @@ interface RouteParams {
 
 // GET: 특정 리뷰 가져오기
 export async function GET(request: NextRequest, { params }: RouteParams) {
-    const { id } = params;
+    // params를 비구조화 할당하기 전 await 사용
+    const routeParams = await Promise.resolve(params);
+    const id = routeParams.id;
 
     try {
         const supabase = createApiClient();
@@ -49,7 +51,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 // PATCH: 리뷰 업데이트
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
-    const { id } = params;
+    // params를 비구조화 할당하기 전 await 사용
+    const routeParams = await Promise.resolve(params);
+    const id = routeParams.id;
 
     try {
         const supabase = createApiClient();
@@ -109,7 +113,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
 // DELETE: 리뷰 삭제
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
-    const { id } = params;
+    // params를 비구조화 할당하기 전 await 사용
+    const routeParams = await Promise.resolve(params);
+    const id = routeParams.id;
 
     try {
         const supabase = createApiClient();

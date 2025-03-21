@@ -261,7 +261,7 @@ export default function UserProfilePage() {
 
             <div className={`${isDesktop ? 'grid grid-cols-1 lg:grid-cols-3 gap-8' : ''}`} style={{ minHeight: '600px' }}>
                 <div className={`${isDesktop ? 'lg:col-span-1' : ''}`}>
-                    <div ref={profileRef} className="max-w-md mx-auto bg-zinc-900 rounded-lg overflow-hidden shadow-lg mb-8 lg:mb-0">
+                    <div ref={profileRef} className="max-w-md mx-auto bg-white dark:bg-zinc-900 rounded-lg overflow-hidden shadow-lg mb-8 lg:mb-0 border border-gray-200 dark:border-zinc-800">
                         <div className="p-8 text-center">
                             <div className="relative w-28 h-28 mx-auto mb-6 rounded-full overflow-hidden border-4 border-purple-500 shadow-lg shadow-purple-500/30 transition-transform hover:scale-105 duration-300">
                                 <Image
@@ -274,23 +274,23 @@ export default function UserProfilePage() {
                             </div>
 
                             <div className="mb-8">
-                                <h2 className="text-gray-400 text-lg mb-2">{t('username')}</h2>
-                                <p className="text-5xl font-bold text-white">{auth.user.username}</p>
+                                <h2 className="text-gray-600 dark:text-gray-400 text-lg mb-2">{t('username')}</h2>
+                                <p className="text-5xl font-bold text-gray-900 dark:text-white">{auth.user.username}</p>
                             </div>
 
                             <Button
                                 onClick={() => router.push('/map/add-place')}
-                                className="bg-green-500 hover:bg-green-600 w-full rounded-lg text-xl py-6 mb-8"
+                                className="bg-green-500 hover:bg-green-600 text-white w-full rounded-lg text-xl py-6 mb-8"
                             >
                                 {t('add_place')}
                             </Button>
 
-                            <div className="bg-zinc-800 p-6 rounded-lg">
-                                <h2 className="text-gray-400 text-lg mb-2">{t('tokens')}</h2>
-                                <p className="text-5xl font-bold text-white mb-4">
+                            <div className="bg-gray-100 dark:bg-zinc-800 p-6 rounded-lg">
+                                <h2 className="text-gray-600 dark:text-gray-400 text-lg mb-2">{t('tokens')}</h2>
+                                <p className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
                                     {userData?.points || 0}
                                 </p>
-                                <p className="text-gray-400">
+                                <p className="text-gray-600 dark:text-gray-400">
                                     {t('next_reward')}: {nextRewardAvailable}
                                 </p>
                             </div>
@@ -299,10 +299,10 @@ export default function UserProfilePage() {
                 </div>
 
                 <div className={`${isDesktop ? 'lg:col-span-2' : ''}`}>
-                    <div className="bg-zinc-900 rounded-lg overflow-hidden shadow-lg" style={isDesktop ? { height: '600px' } : {}}>
+                    <div className="bg-white dark:bg-zinc-900 rounded-lg overflow-hidden shadow-lg border border-gray-200 dark:border-zinc-800" style={isDesktop ? { height: '600px' } : {}}>
                         <div className="p-6 flex flex-col h-full">
                             <div className="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center mb-6">
-                                <h2 className="text-2xl font-bold text-white">{t('my_places')}</h2>
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('my_places')}</h2>
                                 <div className="relative w-full sm:w-64">
                                     <div className="relative rounded-full overflow-hidden">
                                         <Input
@@ -310,19 +310,19 @@ export default function UserProfilePage() {
                                             placeholder={t('search_places')}
                                             value={searchTerm}
                                             onChange={handleSearchChange}
-                                            className="w-full pl-10 pr-4 py-2 bg-zinc-800 border-zinc-700 text-white placeholder-gray-400 rounded-full"
+                                            className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-zinc-800 border-gray-300 dark:border-zinc-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-full"
                                         />
-                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-4 h-4" />
                                     </div>
                                 </div>
                             </div>
 
                             {myPlaces.length === 0 ? (
                                 <div className="text-center py-12 flex-grow flex flex-col justify-center">
-                                    <p className="text-gray-400 mb-6">{t('no_places')}</p>
+                                    <p className="text-gray-600 dark:text-gray-400 mb-6">{t('no_places')}</p>
                                     <Button
                                         onClick={() => router.push('/map/add-place')}
-                                        className="bg-purple-500 hover:bg-purple-600 rounded-lg mx-auto"
+                                        className="bg-purple-500 hover:bg-purple-600 text-white rounded-lg mx-auto"
                                     >
                                         {mapT('add_place')}
                                     </Button>
@@ -330,30 +330,30 @@ export default function UserProfilePage() {
                             ) : (
                                 <div className="overflow-auto" style={{ height: 'calc(100% - 70px)' }}>
                                     <Table>
-                                        <TableHeader className="sticky top-0 bg-zinc-900 z-10">
-                                            <TableRow>
-                                                <TableHead>{t('place_name')}</TableHead>
-                                                <TableHead className="hidden md:table-cell">{t('place_type')}</TableHead>
-                                                <TableHead className="hidden md:table-cell">{t('place_address')}</TableHead>
-                                                <TableHead>{t('place_action')}</TableHead>
+                                        <TableHeader className="sticky top-0 bg-gray-50 dark:bg-zinc-900 z-10">
+                                            <TableRow className="border-b border-gray-200 dark:border-zinc-700">
+                                                <TableHead className="text-gray-900 dark:text-white">{t('place_name')}</TableHead>
+                                                <TableHead className="hidden md:table-cell text-gray-900 dark:text-white">{t('place_type')}</TableHead>
+                                                <TableHead className="hidden md:table-cell text-gray-900 dark:text-white">{t('place_address')}</TableHead>
+                                                <TableHead className="text-gray-900 dark:text-white">{t('place_action')}</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
                                             {filteredPlaces.map((place) => (
-                                                <TableRow key={place.id}>
-                                                    <TableCell className="font-medium">{place.name}</TableCell>
-                                                    <TableCell className="hidden md:table-cell">
+                                                <TableRow key={place.id} className="border-b border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800/50">
+                                                    <TableCell className="font-medium text-gray-900 dark:text-white">{place.name}</TableCell>
+                                                    <TableCell className="hidden md:table-cell text-gray-700 dark:text-gray-300">
                                                         <Badge className={getTypeBadgeColor(place.type)}>
                                                             {getTypeName(place.type)}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell className="hidden md:table-cell truncate max-w-[200px]">
+                                                    <TableCell className="hidden md:table-cell truncate max-w-[200px] text-gray-700 dark:text-gray-300">
                                                         {place.address}
                                                     </TableCell>
                                                     <TableCell>
                                                         <Button
                                                             onClick={() => handleEditPlace(place.id)}
-                                                            className="bg-blue-500 hover:bg-blue-600 rounded-lg"
+                                                            className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
                                                             size="sm"
                                                         >
                                                             {t('edit_place')}

@@ -13,7 +13,7 @@ export default function Home() {
       description: t('education_description'),
       cta: t('education_cta'),
       icon: <BookOpen className="h-8 w-8 text-blue-600 dark:text-blue-500" />,
-      href: '/education',
+      href: '/map',
       color: 'blue'
     },
     {
@@ -21,7 +21,7 @@ export default function Home() {
       description: t('exchange_description'),
       cta: t('exchange_cta'),
       icon: <Store className="h-8 w-8 text-pink-600 dark:text-pink-500" />,
-      href: '/exchange',
+      href: '/map',
       color: 'pink'
     },
     {
@@ -29,7 +29,7 @@ export default function Home() {
       description: t('support_description'),
       cta: t('support_cta'),
       icon: <Receipt className="h-8 w-8 text-green-600 dark:text-green-500" />,
-      href: '/tax',
+      href: '/map',
       color: 'green'
     },
     {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -16,6 +16,7 @@ interface SaveMapComponentProps {
 export default function SaveMapComponent({ position, onPositionSelect }: SaveMapComponentProps) {
     const mapRef = useRef<L.Map | null>(null);
     const markerRef = useRef<L.Marker | null>(null);
+    const [locationAccuracy, setLocationAccuracy] = useState<number | null>(null);
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -34,6 +35,12 @@ export default function SaveMapComponent({ position, onPositionSelect }: SaveMap
             .leaflet-control-attribution {
                 display: none;
             }
+            .accuracy-circle {
+                stroke: #4080ff;
+                stroke-width: 1;
+                fill: #4080ff;
+                fill-opacity: 0.1;
+            }
         `;
         document.head.appendChild(style);
 
@@ -50,7 +57,7 @@ export default function SaveMapComponent({ position, onPositionSelect }: SaveMap
         if (!mapRef.current) {
             mapRef.current = L.map('map', {
                 center: position,
-                zoom: 13,
+                zoom: 17, // 더 확대된 줌 레벨
                 layers: [
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -76,6 +83,56 @@ export default function SaveMapComponent({ position, onPositionSelect }: SaveMap
                 }
                 onPositionSelect([lat, lng]);
             });
+
+            // 현재 위치 정확도 표시용 layer
+            const accuracyLayer = L.layerGroup().addTo(mapRef.current);
+
+            // 현재 위치의 정확도 정보 가져오기
+            if (navigator.geolocation) {
+                // 위치 정보 옵션 - 정확도 높이기
+                const geoOptions = {
+                    enableHighAccuracy: true, // 높은 정확도 요청
+                    timeout: 10000,          // 10초 타임아웃
+                    maximumAge: 0            // 캐시된 위치 정보 사용 안 함
+                };
+
+                navigator.geolocation.getCurrentPosition(
+                    (geoPosition) => {
+                        console.log('현재 위치(SaveMap):', geoPosition.coords.latitude, geoPosition.coords.longitude);
+                        const accuracy = geoPosition.coords.accuracy;
+                        console.log('위치 정확도(SaveMap):', accuracy, 'meters');
+
+                        setLocationAccuracy(accuracy);
+
+                        // 정확도 반경 표시 (미터 단위)
+                        if (mapRef.current) {
+                            accuracyLayer.clearLayers();
+                            const latLng = L.latLng(geoPosition.coords.latitude, geoPosition.coords.longitude);
+
+                            // 정확도 원 추가
+                            const circle = L.circle(latLng, {
+                                radius: accuracy,
+                                className: 'accuracy-circle'
+                            }).addTo(accuracyLayer);
+
+                            // 사용자에게 정확도 정보 표시
+                            const accuracyInfo = L.tooltip()
+                                .setLatLng(latLng)
+                                .setContent(`위치 정확도: ${Math.round(accuracy)}m`)
+                                .openOn(mapRef.current);
+
+                            // 5초 후 툴팁 제거
+                            setTimeout(() => {
+                                mapRef.current?.closeTooltip(accuracyInfo);
+                            }, 5000);
+                        }
+                    },
+                    (error) => {
+                        console.error("현재 위치 정확도 가져오기 실패:", error);
+                    },
+                    geoOptions
+                );
+            }
         }
 
         // 컴포넌트 언마운트 시 지도 제거
@@ -95,5 +152,15 @@ export default function SaveMapComponent({ position, onPositionSelect }: SaveMap
         }
     }, [position]);
 
-    return <div id="map" className="w-full h-full" />;
+    // 정확도 정보 표시
+    return (
+        <div className="relative w-full h-full">
+            <div id="map" className="w-full h-full" />
+            {locationAccuracy !== null && (
+                <div className="absolute bottom-2 left-2 bg-white/80 dark:bg-black/80 px-2 py-1 rounded text-xs z-[1000]">
+                    위치 정확도: 약 {Math.round(locationAccuracy)}m
+                </div>
+            )}
+        </div>
+    );
 } 

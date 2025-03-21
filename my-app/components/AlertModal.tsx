@@ -47,14 +47,14 @@ export function AlertModal({ isOpen, onClose, message }: AlertModalProps) {
                         leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
-                        <div className="inline-block align-bottom bg-zinc-900 border border-zinc-700 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                        <div className="inline-block align-bottom bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
                             <div>
                                 <div className="mt-3 text-center sm:mt-5">
-                                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-white">
+                                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
                                         알림
                                     </Dialog.Title>
                                     <div className="mt-2">
-                                        <p className="text-sm text-gray-300 whitespace-pre-line">
+                                        <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">
                                             {message}
                                         </p>
                                     </div>

@@ -55,11 +55,14 @@ export default function EditPlacePage({ params }: { params: { id: string } }) {
     const t = useTranslations('Map');
     const router = useRouter();
     const supabase = createClient();
-    const [position, setPosition] = useState<[number, number]>([37.5665, 126.9780]); // 서울 중심 좌표
+    const [position, setPosition] = useState<[number, number]>([37.5665, 126.9780]); // 서울 중심 좌표 (초기값)
     const [auth, setAuth] = useState<AuthResult | null>(null);
     const [placeData, setPlaceData] = useState<PlaceData | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+    // params에서 ID 값 가져오기
+    const placeId = params.id;
 
     // 폼 상태 관리
     const [name, setName] = useState('');
@@ -72,6 +75,24 @@ export default function EditPlacePage({ params }: { params: { id: string } }) {
 
     const typeT = useTranslations('Map.place.type');
 
+    // 현재 위치 가져오기
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    // 장소 데이터가 아직 로드되지 않았을 때만 현재 위치 사용
+                    if (!placeData) {
+                        setPosition([position.coords.latitude, position.coords.longitude]);
+                    }
+                },
+                (error) => {
+                    console.error("현재 위치를 가져오는데 실패했습니다:", error);
+                    // 기본 위치(서울 중심)로 유지
+                }
+            );
+        }
+    }, [placeData]);
+
     // 인증 상태 확인 및 장소 데이터 로드
     useEffect(() => {
         // 로그인 확인
@@ -80,7 +101,7 @@ export default function EditPlacePage({ params }: { params: { id: string } }) {
             try {
                 const authData = JSON.parse(savedAuth);
                 setAuth(authData);
-                fetchPlaceData(params.id, authData.user.uid);
+                fetchPlaceData(placeId, authData.user.uid);
             } catch (error) {
                 console.error("저장된 인증 정보 파싱 오류:", error);
                 router.push('/user'); // 인증 정보가 잘못된 경우 사용자 페이지로 리디렉션
@@ -89,7 +110,7 @@ export default function EditPlacePage({ params }: { params: { id: string } }) {
             // 인증 정보가 없으면 사용자 페이지로 리디렉션
             router.push('/user');
         }
-    }, [params.id, router]);
+    }, [placeId, router]);
 
     // 장소 데이터 조회
     const fetchPlaceData = async (placeId: string, userId: string) => {
@@ -487,7 +508,7 @@ export default function EditPlacePage({ params }: { params: { id: string } }) {
                                     setContents={description}
                                     onChange={(value) => setDescription(value)}
                                     height="100%"
-                                    placeholder={t('place.form.description_edit_placeholder')}
+                                    placeholder={t('place.form.description_placeholder')}
                                     onError={() => {
                                         console.error('에디터 로드 실패');
                                     }}

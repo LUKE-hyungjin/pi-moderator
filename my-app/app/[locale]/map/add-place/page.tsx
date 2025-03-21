@@ -47,7 +47,7 @@ export default function AddPlacePage() {
     const typeT = useTranslations('Map.place.type');
     const router = useRouter();
     const supabase = createClient();
-    const [position, setPosition] = useState<[number, number]>([37.5665, 126.9780]); // 서울 중심 좌표
+    const [position, setPosition] = useState<[number, number]>([37.5665, 126.9780]); // 서울 중심 좌표 (초기값)
     const [auth, setAuth] = useState<AuthResult | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -59,6 +59,21 @@ export default function AddPlacePage() {
     const [description, setDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState('');
+
+    // 현재 위치 가져오기
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setPosition([position.coords.latitude, position.coords.longitude]);
+                },
+                (error) => {
+                    console.error("현재 위치를 가져오는데 실패했습니다:", error);
+                    // 기본 위치(서울 중심)로 유지
+                }
+            );
+        }
+    }, []);
 
     // localStorage에서 인증 정보 확인
     useEffect(() => {

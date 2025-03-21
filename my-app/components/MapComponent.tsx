@@ -61,6 +61,33 @@ export default function MapComponent({ activeType, onMarkerClick }: MapComponent
     const [error, setError] = useState<string | null>(null);
     const supabase = createClient();
     const mapContainerRef = useRef<HTMLDivElement>(null);
+    const [mapCenter, setMapCenter] = useState<[number, number]>([36.5, 127.5]); // 한국 중심을 기본값으로 설정
+    const [mapReady, setMapReady] = useState(false);
+
+    // 현재 위치 가져오기
+    useEffect(() => {
+        if (navigator.geolocation) {
+            // 위치 정보 옵션 - 정확도 높이기
+            const geoOptions = {
+                enableHighAccuracy: true, // 높은 정확도 요청
+                timeout: 10000,           // 10초 타임아웃
+                maximumAge: 0             // 캐시된 위치 정보 사용 안 함
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setMapCenter([position.coords.latitude, position.coords.longitude]);
+                    setMapReady(true);
+                },
+                (error) => {
+                    console.error("현재 위치를 가져오는데 실패했습니다:", error);
+                    // 기본 위치(한국 중심)로 유지
+                    setMapReady(true);
+                },
+                geoOptions // 정확도 높은 옵션 적용
+            );
+        }
+    }, []);
 
     // 마커 아이콘 문제 해결을 위한 재설정
     useEffect(() => {
@@ -186,28 +213,53 @@ export default function MapComponent({ activeType, onMarkerClick }: MapComponent
         }
       `}</style>
             <div ref={mapContainerRef} className="map-wrapper w-full h-[300px] sm:h-[600px]">
-                <MapContainer
-                    center={[36.5, 127.5]} // 대한민국 중심
-                    zoom={7}
-                    scrollWheelZoom={true}
-                    style={{ height: '100%', width: '100%' }}
-                >
-                    <MapResizeHandler />
-                    <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    {filteredMarkers.map(marker => (
-                        <Marker
-                            key={marker.id}
-                            position={[marker.latitude, marker.longitude]}
-                            icon={getMarkerIcon(marker.type)}
-                            eventHandlers={{
-                                click: () => handleMarkerClick(marker),
-                            }}
+                {mapReady && (
+                    <MapContainer
+                        center={mapCenter} // 현재 위치 중심으로 설정
+                        zoom={15} // 좀 더 확대된 줌 레벨로 변경
+                        scrollWheelZoom={true}
+                        style={{ height: '100%', width: '100%' }}
+                    >
+                        <MapResizeHandler />
+                        <TileLayer
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
-                    ))}
-                </MapContainer>
+                        {/* 현재 위치 마커 표시 */}
+                        <Marker
+                            position={mapCenter}
+                            icon={L.divIcon({
+                                className: 'current-location-marker',
+                                html: `<div class="flex items-center justify-center">
+                                <div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white"></div>
+                                <div class="absolute w-12 h-12 bg-blue-500 rounded-full opacity-20"></div>
+                            </div>`,
+                                iconSize: [20, 20],
+                                iconAnchor: [10, 10],
+                            })}
+                        >
+                            <Popup>내 현재 위치</Popup>
+                        </Marker>
+                        {filteredMarkers.map(marker => (
+                            <Marker
+                                key={marker.id}
+                                position={[marker.latitude, marker.longitude]}
+                                icon={getMarkerIcon(marker.type)}
+                                eventHandlers={{
+                                    click: () => handleMarkerClick(marker),
+                                }}
+                            />
+                        ))}
+                    </MapContainer>
+                )}
+                {!mapReady && (
+                    <div className="w-full h-full flex items-center justify-center bg-zinc-800">
+                        <div className="flex flex-col items-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-2"></div>
+                            <p className="text-gray-300">위치 정보를 불러오는 중...</p>
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     );

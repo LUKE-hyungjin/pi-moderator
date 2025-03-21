@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createApiClient } from '@/lib/supabase/server';
 import { InsertReview } from '@/lib/supabase/types';
+import { v4 as uuidv4 } from 'uuid';
 
 // 타입 정의
 interface RouteParams {
@@ -11,7 +12,9 @@ interface RouteParams {
 
 // GET: 특정 마커의 모든 리뷰 가져오기
 export async function GET(request: NextRequest, { params }: RouteParams) {
-    const { id } = params;
+    // params를 비구조화 할당하기 전 await 사용
+    const routeParams = await Promise.resolve(params);
+    const id = routeParams.id;
 
     try {
         const supabase = createApiClient();
@@ -42,13 +45,18 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 // POST: 특정 마커에 새 리뷰 생성
 export async function POST(request: NextRequest, { params }: RouteParams) {
-    const { id } = params;
+    // params를 비구조화 할당하기 전 await 사용
+    const routeParams = await Promise.resolve(params);
+    const id = routeParams.id;
 
     try {
         const supabase = createApiClient();
 
         // JSON 데이터 파싱
         const reviewData: InsertReview = await request.json();
+
+        // UUID 생성 및 할당
+        reviewData.id = uuidv4();
 
         // 마커 ID 설정
         reviewData.marker_id = id;
