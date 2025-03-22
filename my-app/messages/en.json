@@ -22,7 +22,10 @@
     },
     "Navbar": {
         "home": "Home",
-        "picoin": "Pi Coin",
+        "services": "Services",
+        "education": "Education",
+        "exchange": "Exchange",
+        "tax": "Tax",
         "map": "Map",
         "login_required": "Login required",
         "auth": "Pi Network Auth",

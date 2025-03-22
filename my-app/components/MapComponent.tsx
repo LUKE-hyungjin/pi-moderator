@@ -285,7 +285,7 @@ export default function MapComponent({ activeType, onMarkerClick }: MapComponent
                     <MapContainer
                         center={mapCenter}
                         zoom={zoomLevel}
-                        zoomControl={false}
+                        zoomControl={true}
                         attributionControl={false}
                         scrollWheelZoom={true}
                         style={{ height: '100%', width: '100%' }}

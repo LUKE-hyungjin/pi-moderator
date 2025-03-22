@@ -17,7 +17,12 @@ import {
     SheetTitle,
     SheetDescription,
 } from '@/components/ui/sheet';
-import { Menu, X } from 'lucide-react';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { AlertModal } from '@/components/AlertModal';
 import Script from 'next/script';
@@ -57,18 +62,24 @@ export default function Navbar() {
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [sdkLoaded, setSdkLoaded] = useState(false);
+    const [servicesOpen, setServicesOpen] = useState(false);
 
+    // 메인 네비게이션 링크
     const navLinks = [
         { href: '/', label: t('home') },
-        { href: '/picoin', label: t('picoin') },
+        {
+            href: '#',
+            label: t('services'),
+            hasSubmenu: true,
+            submenu: [
+                { href: '/service?type=education', label: t('education') },
+                { href: '/service?type=exchange', label: t('exchange') },
+                { href: '/service?type=tax', label: t('tax') },
+            ]
+        },
         { href: '/map', label: t('map') },
         { href: '/user', label: t('user') },
     ];
-
-    // 인증된 사용자인 경우 사용자 프로필 링크 추가 (더 이상 사용하지 않음)
-    // const navLinksWithProfile = auth 
-    //     ? [...navLinks, { href: '/user', label: t('user') }]
-    //     : navLinks;
 
     // Pi Network SDK 로드 핸들러
     const handleSdkLoad = () => {
@@ -219,15 +230,44 @@ export default function Navbar() {
 
                         {/* 데스크톱 네비게이션 */}
                         <div className="hidden md:flex items-center gap-6">
-                            {navLinks.map((link) => (
-                                <I18nLink
-                                    key={link.href}
-                                    href={link.href}
-                                    className="hover:text-purple-400 transition-colors relative group py-1"
-                                >
-                                    {link.label}
-                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500 transition-all duration-300 group-hover:w-full"></span>
-                                </I18nLink>
+                            {navLinks.map((link, index) => (
+                                link.hasSubmenu ? (
+                                    <Popover key={index} open={servicesOpen} onOpenChange={setServicesOpen}>
+                                        <PopoverTrigger asChild>
+                                            <button
+                                                className="flex items-center gap-1 hover:text-purple-400 transition-colors relative group py-1"
+                                                onClick={() => setServicesOpen(!servicesOpen)}
+                                            >
+                                                {link.label}
+                                                <ChevronDown className="h-4 w-4" />
+                                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500 transition-all duration-300 group-hover:w-full"></span>
+                                            </button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="p-2 w-48 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 shadow-lg rounded-md z-150">
+                                            <div className="flex flex-col space-y-1">
+                                                {link.submenu.map((subitem, subindex) => (
+                                                    <I18nLink
+                                                        key={subindex}
+                                                        href={subitem.href}
+                                                        className="hover:bg-gray-100 dark:hover:bg-zinc-800 px-3 py-2 rounded-md transition-colors"
+                                                        onClick={() => setServicesOpen(false)}
+                                                    >
+                                                        {subitem.label}
+                                                    </I18nLink>
+                                                ))}
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                ) : (
+                                    <I18nLink
+                                        key={index}
+                                        href={link.href}
+                                        className="hover:text-purple-400 transition-colors relative group py-1"
+                                    >
+                                        {link.label}
+                                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500 transition-all duration-300 group-hover:w-full"></span>
+                                    </I18nLink>
+                                )
                             ))}
                         </div>
                     </div>
@@ -282,16 +322,37 @@ export default function Navbar() {
                                         <SheetTitle className="text-white text-xl">{t('menu')}</SheetTitle>
                                     </SheetHeader>
                                     <div className="flex flex-col gap-8 mt-10 text-center">
-                                        {navLinks.map((link) => (
-                                            <SheetClose asChild key={link.href}>
-                                                <I18nLink
-                                                    href={link.href}
-                                                    className="text-lg hover:text-purple-400 transition-colors flex items-center justify-center"
-                                                    onClick={() => setIsOpen(false)}
-                                                >
-                                                    {link.label}
-                                                </I18nLink>
-                                            </SheetClose>
+                                        {navLinks.map((link, index) => (
+                                            link.hasSubmenu ? (
+                                                <div key={index} className="flex flex-col gap-4">
+                                                    <div className="text-lg text-purple-400 font-medium">
+                                                        {link.label}
+                                                    </div>
+                                                    <div className="flex flex-col gap-3 pl-4">
+                                                        {link.submenu.map((subitem, subindex) => (
+                                                            <SheetClose asChild key={subindex}>
+                                                                <I18nLink
+                                                                    href={subitem.href}
+                                                                    className="text-base hover:text-purple-400 transition-colors"
+                                                                    onClick={() => setIsOpen(false)}
+                                                                >
+                                                                    {subitem.label}
+                                                                </I18nLink>
+                                                            </SheetClose>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <SheetClose asChild key={index}>
+                                                    <I18nLink
+                                                        href={link.href}
+                                                        className="text-lg hover:text-purple-400 transition-colors flex items-center justify-center"
+                                                        onClick={() => setIsOpen(false)}
+                                                    >
+                                                        {link.label}
+                                                    </I18nLink>
+                                                </SheetClose>
+                                            )
                                         ))}
                                         <hr className="border-white/10" />
                                         {auth ? (
