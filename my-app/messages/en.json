@@ -133,7 +133,11 @@
         "place_address": "Address",
         "place_action": "Action",
         "edit_place": "Edit",
-        "search_places": "Search places..."
+        "search_places": "Search places...",
+        "claim_reward_now": "Claim Reward Now",
+        "claiming_reward": "Claiming Reward...",
+        "reward_claimed_success": "You received {points} tokens!",
+        "reward_claim_error": "There was an error claiming your reward. Please try again."
     },
     "Footer": {
         "email": "Email",

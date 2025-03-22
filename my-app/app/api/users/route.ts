@@ -7,8 +7,29 @@ export async function GET(request: NextRequest) {
     try {
         const supabase = createApiClient();
 
-        // 인증 처리가 필요하지만 간단한 구현을 위해 생략
+        // URL 쿼리 파라미터 처리
+        const url = new URL(request.url);
+        const id = url.searchParams.get('id');
 
+        // 특정 ID로 사용자 검색 
+        if (id) {
+            const { data, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', id);
+
+            if (error) {
+                console.error('사용자 조회 오류:', error);
+                return NextResponse.json(
+                    { error: '사용자 정보를 가져오는 중 오류가 발생했습니다.' },
+                    { status: 500 }
+                );
+            }
+
+            return NextResponse.json(data);
+        }
+
+        // ID가 없으면 모든 사용자 검색
         const { data, error } = await supabase
             .from('users')
             .select('*')

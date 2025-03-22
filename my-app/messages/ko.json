@@ -143,7 +143,11 @@
         "place_address": "주소",
         "place_action": "작업",
         "edit_place": "수정",
-        "search_places": "장소 검색..."
+        "search_places": "장소 검색...",
+        "claim_reward_now": "지금 보상 받기",
+        "claiming_reward": "보상 받는 중...",
+        "reward_claimed_success": "{points} 토큰을 받았습니다!",
+        "reward_claim_error": "보상을 받는 중 오류가 발생했습니다. 다시 시도해주세요."
     },
     "Footer": {
         "email": "이메일",

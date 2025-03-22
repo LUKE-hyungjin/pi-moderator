@@ -110,7 +110,7 @@ export default function UserProfilePage() {
 
     const fetchUserData = async (piUid: string) => {
         try {
-            const response = await fetch(`/api/users?pi_uid=${piUid}`);
+            const response = await fetch(`/api/users?id=${piUid}`);
             if (response.ok) {
                 const data = await response.json();
                 if (data && data.length > 0) {
@@ -215,6 +215,65 @@ export default function UserProfilePage() {
         setSearchTerm(e.target.value);
     };
 
+    // 로그인 함수 추가
+    const handleRewardClaim = async () => {
+        try {
+            setIsLoading(true);
+
+            // Pi 브라우저에서 PI SDK를 사용하여 인증 정보 새로고침
+            if (typeof window.Pi !== 'undefined' && auth) {
+                // Pi 로그인 시작
+                const scopes = ['username', 'payments', 'wallet_address'];
+
+                try {
+                    // Pi Network SDK 문서에 따라 콜백 함수를 정확하게 전달합니다
+                    const authResult = await window.Pi.authenticate(scopes, () => {
+                        // Promise를 반환하는 빈 콜백 함수
+                        return Promise.resolve();
+                    });
+
+                    if (authResult) {
+                        // 서버에 로그인 정보 전송하여 토큰 보상 요청
+                        const response = await fetch('/api/users/claim-reward', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                piUid: authResult.user.uid,
+                                username: authResult.user.username,
+                            }),
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            // 인증 정보 저장
+                            localStorage.setItem('pi_auth', JSON.stringify(authResult));
+                            setAuth(authResult);
+
+                            // 사용자 데이터 새로고침
+                            fetchUserData(authResult.user.uid);
+
+                            // 성공 메시지 표시
+                            alert(t('reward_claimed_success', { points: data.pointsAwarded }));
+                        } else {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || t('reward_claim_error'));
+                        }
+                    }
+                } catch (authError) {
+                    console.error("Pi 인증 오류:", authError);
+                    throw new Error(t('reward_claim_error'));
+                }
+            }
+        } catch (error) {
+            console.error("보상 청구 오류:", error);
+            alert(error instanceof Error ? error.message : t('reward_claim_error'));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     // 로딩 중 상태
     if (isLoading) {
         return (
@@ -290,9 +349,27 @@ export default function UserProfilePage() {
                                 <p className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
                                     {userData?.points || 0}
                                 </p>
-                                <p className="text-gray-600 dark:text-gray-400">
-                                    {t('next_reward')}: {nextRewardAvailable}
-                                </p>
+
+                                {nextRewardAvailable === 'Now' ? (
+                                    <Button
+                                        onClick={handleRewardClaim}
+                                        disabled={isLoading}
+                                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white w-full rounded-lg mb-4"
+                                    >
+                                        {isLoading ? (
+                                            <div className="flex items-center justify-center">
+                                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                                {t('claiming_reward')}
+                                            </div>
+                                        ) : (
+                                            t('claim_reward_now')
+                                        )}
+                                    </Button>
+                                ) : (
+                                    <p className="text-gray-600 dark:text-gray-400">
+                                        {t('next_reward')}: {nextRewardAvailable}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
