@@ -13,14 +13,24 @@ import AlertMessageDialog from '@/components/AlertMessageDialog';
 import RatingStars from '@/components/RatingStars';
 
 // Leaflet 지도 컴포넌트를 클라이언트 사이드에서만 렌더링하기 위한 동적 임포트
+// 스켈레톤 UI를 개선하여 사용자 경험 향상
 const MapComponent = dynamic(() => import('@/components/MapComponent'), {
     ssr: false,
     loading: () => (
-        <div className="w-full h-[300px] sm:h-[500px] bg-gray-200 dark:bg-zinc-900/50 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+        <div className="w-full h-[300px] sm:h-[600px] bg-gray-200 dark:bg-zinc-900/50 flex flex-col items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
+            <div className="text-gray-500 dark:text-gray-400">지도를 불러오는 중...</div>
         </div>
     )
 });
+
+// Next.js 앱 라우터에서 페이지 초기 로드 시 즉시 지도 컴포넌트 가져오기 시작
+if (typeof window !== 'undefined') {
+    // 페이지 초기화 시 즉시 MapComponent 모듈 가져오기 시작
+    import('@/components/MapComponent').catch(err =>
+        console.error('지도 컴포넌트 미리 로드 오류:', err)
+    );
+}
 
 // 마커 유형 정의 - Supabase 테이블과 동일하게 변경
 type MarkerType = 'all' | 'education' | 'exchange' | 'tax';
