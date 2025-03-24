@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createApiClient } from '@/lib/supabase/server';
-import { UpdateReview } from '@/lib/supabase/types';
 
 // 타입 정의
 interface RouteParams {

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import {
@@ -7,16 +6,6 @@ import {
     DialogHeader,
     DialogTitle
 } from '@/components/ui/dialog';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogCancel,
-} from "@/components/ui/alert-dialog";
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -102,7 +91,6 @@ export default function ReviewDialog({
     reviewContent,
     setReviewContent,
     reviewRating,
-    setReviewRating,
     isSubmitting,
     handleReviewSubmit,
     handleOpenEditDialog,

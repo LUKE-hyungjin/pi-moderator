@@ -1,16 +1,16 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+//import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { Link as I18nLink } from '@/i18n/routing';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Store, Receipt, ArrowRight, Phone, Mail, MapPin, Users, Clock, BookMarked, Landmark, BarChart, FileText, Building, Wallet } from 'lucide-react';
 
 export default function ServicePage() {
-    const t = useTranslations('Map'); // 기존의 번역 키 재사용
+    //const t = useTranslations('Map'); // 기존의 번역 키 재사용
     const searchParams = useSearchParams();
     const type = searchParams.get('type') || 'education';
 

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useRouter } from '@/i18n/routing';
 import { createClient } from '@/lib/supabase/client';

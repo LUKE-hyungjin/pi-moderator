@@ -56,7 +56,6 @@ declare global {
 
 export default function Navbar() {
     const t = useTranslations('Navbar');
-    const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [auth, setAuth] = useState<AuthResult | null>(null);
     const [isAlertOpen, setIsAlertOpen] = useState(false);

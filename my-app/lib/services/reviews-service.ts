@@ -1,7 +1,7 @@
 'use client';
 
 import { createClient } from '../supabase/client';
-import type { Review, InsertReview, UpdateReview } from '../supabase/types';
+import type { Review, InsertReview } from '../supabase/types';
 
 // 특정 마커의 모든 리뷰 가져오기
 export async function getReviewsByMarkerId(markerId: string): Promise<Review[]> {

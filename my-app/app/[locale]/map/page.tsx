@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { createClient } from '@/lib/supabase/client';
 import ReviewDialog from '@/components/ReviewDialog';
 import ReviewEditDialog from '@/components/ReviewEditDialog';
 import ReviewDeleteDialog from '@/components/ReviewDeleteDialog';
@@ -80,7 +78,6 @@ export default function MapPage() {
     const [activeType, setActiveType] = useState<MarkerType>('all');
     const [selectedMarker, setSelectedMarker] = useState<MarkerDetail | null>(null);
     const [detailOpen, setDetailOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState('info');
     const [reviews, setReviews] = useState<Review[]>([]);
     const [reviewContent, setReviewContent] = useState('');
     const [reviewRating, setReviewRating] = useState(1);
@@ -99,7 +96,6 @@ export default function MapPage() {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [reviewToDelete, setReviewToDelete] = useState<string | null>(null);
     const reviewsPerPage = 5;
-    const supabase = createClient();
 
     // 필터 버튼 정의
     const filterButtons = [

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createApiClient } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
 
 // Pi Network API로 토큰 검증하는 함수
 async function verifyPiToken(accessToken: string) {
